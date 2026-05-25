@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-50: #eef5ff;
+  --color-brand-100: #d9e8ff;
+  --color-brand-500: #2f6df0;
+  --color-brand-600: #1f55d6;
+  --color-brand-700: #1a47b3;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  background: #f7f8fb;
+  color: #0f172a;
+}
+
+body {
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
