@@ -1,5 +1,6 @@
 import { getRepository } from "@/lib/data/repository";
 import { SourceCitation } from "@/components/SourceCitation";
+import { SupportedAirlines, buildCoverage } from "@/components/SupportedAirlines";
 import { cmToIn } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +20,8 @@ function dims(l: number | null, w: number | null, h: number | null): string {
 export default async function RulesPage() {
   const repo = getRepository();
   const [airlines, rules] = await Promise.all([repo.listAirlines(), repo.listRules()]);
+
+  const coverage = buildCoverage(airlines, rules);
 
   const byAirline = airlines
     .map((airline) => ({
@@ -43,6 +46,9 @@ export default async function RulesPage() {
         </p>
       </div>
 
+      <SupportedAirlines coverage={coverage} />
+
+      <h2 className="pt-2 text-lg font-semibold text-slate-900">Full rule details</h2>
       <div className="space-y-6">
         {byAirline.map(({ airline, rules }) => (
           <section key={airline.id} className="rounded-2xl border border-slate-200 bg-white p-5">

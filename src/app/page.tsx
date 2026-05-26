@@ -31,6 +31,10 @@ export default function HomePage() {
             Browse carriers
           </Link>
         </div>
+        <p className="mt-4 text-xs text-slate-500">
+          Limited coverage today: a focused set of airlines, economy cabin.{" "}
+          <Link href="/rules" className="text-brand-700 underline">See exactly which airlines are supported</Link>.
+        </p>
       </section>
 
       <section className="grid gap-6 sm:grid-cols-3">

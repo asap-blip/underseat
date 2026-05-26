@@ -132,6 +132,26 @@ Reason codes are structured (e.g. `DIMENSION_HEIGHT_EXCEEDED`,
 `SOFT_SIDED_REQUIRED`, `AIRCRAFT_DATA_MISSING`, `PET_COMFORT_UNCERTAIN`,
 `FINAL_APPROVAL_AIRLINE_DISCRETION`) — see `src/lib/rules/reasonCodes.ts`.
 
+## Coverage (what's actually supported today)
+
+This is **not** full airline coverage. The seed currently includes **8 airlines /
+9 rules**, and `/rules` shows a visible **Supported airlines** list with each
+airline's source URL and last-verified date.
+
+| Airline | Cabin(s) modeled | Dimensions on file? |
+| --- | --- | --- |
+| Air Canada, United, American, Southwest, JetBlue, Alaska, Lufthansa | Economy (Lufthansa also Business) | Yes |
+| Delta | Economy | **No** — incomplete by design; always returns BORDERLINE / low confidence |
+
+Honest limitations, surfaced in the UI (landing, `/check`, `/rules`):
+
+- **Routes are not validated or route-specific.** A verdict depends only on the
+  **airline + cabin**, never the city pair.
+- **Cabins other than economy** (premium economy, first, and business on every
+  airline except Lufthansa) **fall back to the airline's economy rule** — they
+  are not separately modeled.
+- All values are illustrative until independently re-verified.
+
 ## Rules & Sources (transparency layer)
 
 Trust is the product, so every number is traceable:
