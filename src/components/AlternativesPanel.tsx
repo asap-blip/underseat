@@ -36,20 +36,24 @@ export function AlternativesPanel({
               {alt.carrier.priceUsd != null && (
                 <span className="text-sm font-medium text-slate-700">~${alt.carrier.priceUsd}</span>
               )}
-              <Link
-                href={trackedClickUrl(alt.carrier.id, "amazon", checkToken)}
-                rel="nofollow sponsored noopener"
-                target="_blank"
-                className="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700"
-              >
-                Shop this carrier
-              </Link>
+              <div className="flex flex-col items-end gap-0.5">
+                <Link
+                  href={trackedClickUrl(alt.carrier.id, "amazon", checkToken)}
+                  rel="nofollow sponsored noopener"
+                  target="_blank"
+                  className="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700"
+                >
+                  Shop this carrier
+                </Link>
+                <span className="text-[10px] text-slate-400">Affiliate link</span>
+              </div>
             </div>
           </div>
         ))}
       </div>
-      <p className="mt-3 text-[11px] text-slate-400">
-        Links may be affiliate links. Suggestions are ranked by fit against your itinerary, not by payout.
+      <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-[11px] text-slate-500">
+        These are affiliate links — we may earn a commission from qualifying purchases. Suggestions are
+        ranked by fit against your itinerary, never by payout.
       </p>
     </section>
   );

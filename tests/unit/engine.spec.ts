@@ -144,6 +144,19 @@ describe("evaluateLeg", () => {
     expect(risky.verdict).toBe("BORDERLINE");
   });
 
+  it("is high confidence with no reasons when the rule is complete and freshly verified", () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const res = evaluateLeg(carrier(), pet, leg, airline, rule({ lastVerifiedAt: today }), 0);
+    expect(res.confidence).toBe("high");
+    expect(res.confidenceReasons).toHaveLength(0);
+  });
+
+  it("explains reduced confidence for a stale source", () => {
+    const res = evaluateLeg(carrier(), pet, leg, airline, rule({ lastVerifiedAt: "2024-01-01" }), 0);
+    expect(res.confidence).toBe("low");
+    expect(res.confidenceReasons.some((m) => /re-verified/i.test(m))).toBe(true);
+  });
+
   it("always includes the airline-discretion caveat", () => {
     const res = evaluateLeg(carrier(), pet, leg, airline, rule(), 0);
     expect(res.reasons.some((r) => r.code === "FINAL_APPROVAL_AIRLINE_DISCRETION")).toBe(true);

@@ -1,11 +1,12 @@
 import type { CheckResponse } from "@/lib/check/service";
 import { VerdictBadge } from "./VerdictBadge";
 import { DimensionTable } from "./DimensionTable";
-import { ReasonList } from "./ReasonList";
+import { WhyResult } from "./WhyResult";
+import { ConfidenceBadge, ConfidenceReasons } from "./ConfidenceBadge";
 import { AlternativesPanel } from "./AlternativesPanel";
 import { ShareLink } from "./ShareLink";
 import { SourceCitation } from "./SourceCitation";
-import { confidenceLabel, verdictHeadline } from "@/lib/ui";
+import { verdictHeadline } from "@/lib/ui";
 
 export function ResultView({
   response,
@@ -37,9 +38,10 @@ export function ResultView({
           </div>
           <div className="flex flex-col items-end gap-2">
             <VerdictBadge verdict={result.overall} size="lg" />
-            <span className="text-xs text-slate-500">{confidenceLabel[result.confidence]}</span>
+            <ConfidenceBadge confidence={result.confidence} />
           </div>
         </div>
+        <ConfidenceReasons confidence={result.confidence} reasons={result.confidenceReasons} />
         {showShare && (
           <div className="mt-4 flex items-center gap-2">
             <ShareLink />
@@ -99,9 +101,11 @@ export function ResultView({
               </div>
               <div className="flex flex-col items-end gap-1">
                 <VerdictBadge verdict={leg.verdict} />
-                <span className="text-xs text-slate-500">{confidenceLabel[leg.confidence]}</span>
+                <ConfidenceBadge confidence={leg.confidence} />
               </div>
             </div>
+
+            <ConfidenceReasons confidence={leg.confidence} reasons={leg.confidenceReasons} />
 
             <div className="mt-4 grid gap-6 md:grid-cols-2">
               <div>
@@ -110,7 +114,7 @@ export function ResultView({
               </div>
               <div>
                 <h3 className="mb-2 text-sm font-semibold text-slate-700">Why this result</h3>
-                <ReasonList reasons={leg.reasons} />
+                <WhyResult verdict={leg.verdict} reasons={leg.reasons} />
               </div>
             </div>
 

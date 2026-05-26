@@ -38,10 +38,16 @@ export default function RootLayout({
         </header>
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">{children}</main>
         <footer className="border-t border-slate-200 bg-white">
-          <div className="mx-auto max-w-5xl px-4 py-6 text-xs text-slate-500">
-            flypewpet is a compatibility checker, not a guarantee. Airlines make the
-            final acceptance decision at the gate. Always confirm current policy with
-            your airline before you travel.
+          <div className="mx-auto max-w-5xl space-y-2 px-4 py-6 text-xs text-slate-500">
+            <p>
+              flypewpet is a compatibility checker, not a guarantee. Airlines make the
+              final acceptance decision at the gate. Always confirm current policy with
+              your airline before you travel.
+            </p>
+            <p>
+              Some links on this site are affiliate links. As an Amazon Associate we may earn
+              from qualifying purchases. This never affects which carriers we recommend.
+            </p>
           </div>
         </footer>
       </body>

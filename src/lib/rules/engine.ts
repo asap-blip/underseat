@@ -7,6 +7,7 @@ import type {
 } from "@/lib/data/types";
 import type { Reason, ReasonSeverity } from "./reasonCodes";
 import { REASON_LABELS } from "./reasonCodes";
+import { freshness } from "@/lib/freshness";
 
 export type Verdict = "PASS" | "BORDERLINE" | "NO";
 export type ConfidenceBand = "high" | "medium" | "low";
@@ -56,6 +57,8 @@ export interface LegResult {
   cabinModeled: boolean;
   verdict: Verdict;
   confidence: ConfidenceBand;
+  // Plain-language reasons confidence is below "high" (empty when high).
+  confidenceReasons: string[];
   reasons: Reason[];
   ruleSnapshot: RuleSnapshot | null;
   // Per-dimension comparison for the results table (cm).
@@ -84,6 +87,8 @@ export interface DimensionComparison {
 export interface TripResult {
   overall: Verdict;
   confidence: ConfidenceBand;
+  // Aggregated, de-duplicated confidence reasons across all legs.
+  confidenceReasons: string[];
   legs: LegResult[];
 }
 
@@ -176,6 +181,12 @@ export function evaluateLeg(
     cabinModeled,
   };
 
+  // Plain-language explanations for any confidence reduction.
+  const confidenceReasons: string[] = [];
+  if (operatingUnknown) {
+    confidenceReasons.push("The airline that actually operates this leg isn't modeled, so we can't confirm its policy.");
+  }
+
   const ruleSnapshot: RuleSnapshot | null = rule
     ? {
         ruleId: rule.id,
@@ -199,6 +210,7 @@ export function evaluateLeg(
   if (!rule) {
     reasons.push(reason("INCOMPLETE_RULE_DATA", "warn"));
     reasons.push(reason("FINAL_APPROVAL_AIRLINE_DISCRETION", "info"));
+    confidenceReasons.push("We have no published in-cabin rule for this airline and cabin.");
     return {
       legIndex,
       airlineId: airline.id,
@@ -209,6 +221,7 @@ export function evaluateLeg(
       cabin: leg.cabin,
       verdict: verdictFromReasons(reasons),
       confidence: "low",
+      confidenceReasons,
       reasons,
       ruleSnapshot,
       comparison,
@@ -328,21 +341,44 @@ export function evaluateLeg(
   reasons.push(reason("FINAL_APPROVAL_AIRLINE_DISCRETION", "info"));
 
   // ----- Confidence band ---------------------------------------------------
-  // Low only when we cannot judge fit at all (missing max dimensions).
-  // Medium when dimensions exist but some signal is soft (no published weight,
-  // aircraft variance without a flight, or an unverified rule).
-  let confidence: ConfidenceBand = "high";
+  // Reflects data quality, never optimism. "low" when we can't really judge
+  // fit (no dimensions, unknown operating airline, very stale source); "medium"
+  // when a softer signal is missing (no weight limit, aircraft variance, an
+  // economy fallback, or an aging/unverified source).
+  const fresh = freshness(rule.lastVerifiedAt).band;
+
   if (!haveAllMax) {
+    confidenceReasons.push("This airline doesn't publish carrier dimensions, so the size check is limited.");
+  }
+  if (rule.maxCombinedWeightKg == null) {
+    confidenceReasons.push("This airline doesn't publish a combined pet + carrier weight limit.");
+  }
+  if (rule.aircraftVaries && !haveFlightPrecision) {
+    confidenceReasons.push("Under-seat space varies by aircraft and no flight number was provided.");
+  }
+  if (!cabinModeled) {
+    confidenceReasons.push("This cabin isn't separately modeled, so the economy rule was used as a conservative stand-in.");
+  }
+  if (fresh === "unknown") {
+    confidenceReasons.push("This rule has no verification date on file.");
+  } else if (fresh === "stale") {
+    confidenceReasons.push("This rule hasn't been re-verified in a long time and may be out of date.");
+  } else if (fresh === "aging") {
+    confidenceReasons.push("This rule was last verified several months ago.");
+  }
+
+  let confidence: ConfidenceBand = "high";
+  if (!haveAllMax || operatingUnknown || fresh === "stale") {
     confidence = "low";
   } else if (
     rule.maxCombinedWeightKg == null ||
     (rule.aircraftVaries && !haveFlightPrecision) ||
-    rule.lastVerifiedAt == null
+    !cabinModeled ||
+    fresh === "aging" ||
+    fresh === "unknown"
   ) {
     confidence = "medium";
   }
-  // The actual operating airline isn't modeled: this is indicative only.
-  if (operatingUnknown) confidence = "low";
 
   return {
     legIndex,
@@ -354,6 +390,7 @@ export function evaluateLeg(
     cabin: leg.cabin,
     verdict: verdictFromReasons(reasons),
     confidence,
+    confidenceReasons,
     reasons,
     ruleSnapshot,
     comparison,
@@ -388,9 +425,11 @@ export function evaluateTrip(
   const legResults = legs.map((ctx, i) =>
     evaluateLeg(carrier, pet, ctx.leg, ctx.airline, ctx.rule, i, ctx.meta),
   );
+  const confidenceReasons = [...new Set(legResults.flatMap((l) => l.confidenceReasons))];
   return {
     overall: overallVerdict(legResults),
     confidence: overallConfidence(legResults),
+    confidenceReasons,
     legs: legResults,
   };
 }

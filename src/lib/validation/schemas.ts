@@ -88,3 +88,13 @@ export const carrierUpdateSchema = z
   .partial();
 
 export type CarrierUpdateParsed = z.infer<typeof carrierUpdateSchema>;
+
+// "Request an airline" capture. Only the airline name is required.
+export const airlineRequestSchema = z.object({
+  airline: z.string().min(2).max(80),
+  cabin: z.string().max(40).optional().nullable(),
+  email: z.string().email().max(160).optional().or(z.literal("")).nullable(),
+  note: z.string().max(300).optional().nullable(),
+});
+
+export type AirlineRequestParsed = z.infer<typeof airlineRequestSchema>;

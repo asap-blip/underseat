@@ -62,6 +62,9 @@ export function SourceCitation({
       {host && sourceLabel && <span className="text-slate-400">({host})</span>}
       <SourceTypeChip type={sourceType} />
       <FreshnessBadge lastVerifiedAt={lastVerifiedAt} />
+      <span className="text-slate-400">
+        Last verified: {lastVerifiedAt ?? "not on file"}
+      </span>
     </div>
   );
 }

@@ -96,8 +96,9 @@ export function CarrierBrowser({ carriers }: { carriers: Carrier[] }) {
                   rel="nofollow sponsored noopener"
                   target="_blank"
                   className="text-sm font-medium text-slate-600 hover:text-slate-900"
+                  title="Affiliate link — we may earn a commission"
                 >
-                  Shop →
+                  Shop <span className="text-[10px] text-slate-400">(affiliate)</span> →
                 </Link>
               </div>
             </div>

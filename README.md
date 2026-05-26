@@ -180,6 +180,30 @@ verdict from the **worst leg** (NO > BORDERLINE > PASS).
 - Every leg result shows its source URL + last-verified date, and says so plainly
   when the data is incomplete.
 
+## Trust & reliability
+
+Designed to be safe to soft-launch: every verdict shows how much to trust it and why.
+
+- **Confidence (High / Medium / Low)** reflects data quality, never optimism, and
+  is shown next to the overall verdict and every leg. It drops for: no published
+  dimensions (Low), unknown operating carrier (Low), a very stale source (Low);
+  and for no published weight, aircraft variance without a flight, an economy
+  fallback, or an aging/unverified source (Medium). Each result lists plain-language
+  reasons confidence was reduced (`src/lib/rules/engine.ts`, `ConfidenceReasons`).
+- **"Why this result"** groups reasons into plain-language buckets — what blocks
+  it, close to the limit, conservative fallback, incomplete data, pet comfort,
+  good to know — with the precise reason code kept secondary (`src/lib/explain.ts`).
+- **Source on every card**: each result leg shows the source label/link, source
+  type, freshness badge, and an explicit "Last verified" date.
+- **Affiliate disclosure** sits next to every recommendation ("Affiliate link" +
+  "we may earn a commission from qualifying purchases"), with an "As an Amazon
+  Associate…" statement in the footer.
+- **Coverage + demand capture**: `/rules` shows the supported-airlines list, a
+  "Rules last updated" badge, a recent-updates changelog (`src/lib/changelog.ts`),
+  and a **"Missing an airline?"** form (`POST /api/airline-requests` →
+  `airline_requests` table) so coverage gaps become research input instead of
+  fake support.
+
 ## Rules & Sources (transparency layer)
 
 Trust is the product, so every number is traceable:
@@ -222,7 +246,8 @@ Schema in `supabase/migrations/`: `0001_init.sql` defines `users`, `pets`,
 `compatibility_checks`, `merchants`, `merchant_products`, `affiliate_targets`,
 `outbound_clicks`, `product_codes`. `0002_rule_sources.sql` adds source tracking
 (`airline_rules.source_label`, `source_type`) and verification freshness
-(`carriers.verified_at`). Dimensions are centimetres, weights kilograms.
+(`carriers.verified_at`). `0003_airline_requests.sql` adds `airline_requests`
+(demand capture). Dimensions are centimetres, weights kilograms.
 
 ## Seed data
 
