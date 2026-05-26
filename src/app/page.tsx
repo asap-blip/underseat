@@ -25,16 +25,33 @@ export default function HomePage() {
             Check my carrier
           </Link>
           <Link
-            href="/carriers"
+            href="/find"
             className="rounded-lg border border-slate-300 bg-white px-6 py-3 font-medium text-slate-700 hover:bg-slate-50"
           >
-            Browse carriers
+            Help me pick one
           </Link>
         </div>
         <p className="mt-4 text-xs text-slate-500">
           Limited coverage today: a focused set of airlines, economy cabin.{" "}
           <Link href="/rules" className="text-brand-700 underline">See exactly which airlines are supported</Link>.
         </p>
+      </section>
+
+      <section className="grid gap-4 sm:grid-cols-2">
+        <Link href="/check" className="group rounded-2xl border border-slate-200 bg-white p-6 hover:border-brand-500">
+          <h2 className="font-semibold text-slate-900">I already have a carrier</h2>
+          <p className="mt-2 text-sm text-slate-600">
+            Check whether your specific bag fits your flight itinerary, leg by leg, with transparent reasons.
+          </p>
+          <span className="mt-3 inline-block text-sm font-medium text-brand-700 group-hover:underline">Check compatibility →</span>
+        </Link>
+        <Link href="/find" className="group rounded-2xl border border-slate-200 bg-white p-6 hover:border-brand-500">
+          <h2 className="font-semibold text-slate-900">I need a carrier</h2>
+          <p className="mt-2 text-sm text-slate-600">
+            Tell us your pet&apos;s size and we&apos;ll recommend carriers from our curated catalog that are likely to fit — then check them against your trip.
+          </p>
+          <span className="mt-3 inline-block text-sm font-medium text-brand-700 group-hover:underline">Find a carrier →</span>
+        </Link>
       </section>
 
       <section className="grid gap-6 sm:grid-cols-3">

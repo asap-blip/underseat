@@ -81,6 +81,7 @@ to untagged outbound links when they are absent.
 | --- | --- |
 | `/` | Landing — one-line value prop + CTA |
 | `/carriers` | Searchable carrier catalog + QR/code lookup |
+| `/find` | **Reverse search** — enter pet size/weight, get curated carrier recommendations, then check them against a trip |
 | `/check` | Trip builder (carrier + pet + 1..n flight legs) |
 | `/result?d=<token>` | Shareable result — recomputed from the itinerary encoded in the link |
 | `/rules` | **Rules & sources directory** — every airline rule with its official source URL, source label, source type, last-verified date, freshness, and notes |
@@ -182,6 +183,24 @@ verdict from the **worst leg** (NO > BORDERLINE > PASS).
   indicative only" badge, and raises a trip warning — so we never fake precision.
 - Every leg result shows its source URL + last-verified date, and says so plainly
   when the data is incomplete.
+
+## Carrier discovery (two entry paths)
+
+The landing page offers two intents instead of a single catalog:
+
+- **"I already have a carrier"** → `/check` (existing compatibility flow).
+- **"I need a carrier"** → `/find` reverse search: enter pet weight (required) and
+  optional length/standing-height, and the **curated** catalog is matched by a
+  conservative size/weight heuristic (`src/lib/recommend.ts`). Each recommendation
+  shows a fit band (Likely fits / Snug / Probably too small), plain-language
+  reasons, an affiliate "Shop" link (labelled), and a "Check my trip →" link that
+  carries the carrier into `/check`.
+
+The catalog is intentionally **curated, not exhaustive** — copy on `/`, `/find`,
+and `/carriers` says so. The reverse-search heuristic is explicitly framed as a
+*likely fit, not a guarantee*: it uses interior-space and weight-rating only, does
+not account for a pet's exact shape or behaviour, and does not check airline rules
+(that happens downstream in `/check`).
 
 ## Trust & reliability
 

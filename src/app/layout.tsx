@@ -23,7 +23,8 @@ export default function RootLayout({
               flypewpet
             </Link>
             <nav className="flex items-center gap-4 text-sm text-slate-600">
-              <Link href="/carriers" className="hover:text-slate-900">Carriers</Link>
+              <Link href="/find" className="hover:text-slate-900">Find a carrier</Link>
+              <Link href="/carriers" className="hover:text-slate-900">Catalog</Link>
               <Link href="/rules" className="hover:text-slate-900">Rules &amp; sources</Link>
               <Link href="/check" className="hover:text-slate-900">Check a trip</Link>
               <Link href="/merchant/petgearco" className="hover:text-slate-900">For merchants</Link>
