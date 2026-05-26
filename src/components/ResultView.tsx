@@ -75,6 +75,11 @@ export function ResultView({
                   {leg.cabin.replace("_", " ")}
                 </div>
                 <div className="mt-1 flex flex-wrap gap-1">
+                  {leg.operatingUnknown && (
+                    <span className="rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-medium text-rose-700">
+                      Operating airline not modeled · indicative only
+                    </span>
+                  )}
                   {leg.operatingOverride && (
                     <span className="rounded-full bg-sky-50 px-2 py-0.5 text-[10px] font-medium text-sky-700">
                       Operating carrier used (booked {leg.bookingAirlineName})

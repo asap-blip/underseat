@@ -44,6 +44,10 @@ const input =
   "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100";
 const label = "block text-xs font-medium text-slate-600 mb-1";
 
+// Sentinel for "operated by an airline we don't model". Kept out of the airline
+// list so the user never picks a misleading modeled substitute.
+const UNKNOWN_OPERATING = "__unknown__";
+
 export function CheckForm({
   airlines,
   carriers,
@@ -75,14 +79,23 @@ export function CheckForm({
 
   const airlineName = (id?: string) => airlines.find((a) => a.id === id)?.name ?? id ?? "";
 
-  // Resolve the airline whose rules apply for a leg: operating > marketed > booking.
+  // Resolve the airline whose rules apply for a leg: operating > marketed >
+  // booking. The UNKNOWN sentinel is not a real airline, so it never overrides.
   const evalAirlineId = (leg: LegField) =>
-    leg.operatingCarrierId || leg.marketedCarrierId || leg.airlineId;
+    leg.operatingCarrierId && leg.operatingCarrierId !== UNKNOWN_OPERATING
+      ? leg.operatingCarrierId
+      : leg.marketedCarrierId || leg.airlineId;
+
+  const isUnknownOperating = (leg: LegField) => leg.operatingCarrierId === UNKNOWN_OPERATING;
 
   const distinctEvalAirlines = new Set((legs ?? []).map((l) => evalAirlineId(l)));
   const hasCodeshare = (legs ?? []).some(
-    (l) => l.operatingCarrierId && l.operatingCarrierId !== (l.marketedCarrierId || l.airlineId),
+    (l) =>
+      l.operatingCarrierId &&
+      l.operatingCarrierId !== UNKNOWN_OPERATING &&
+      l.operatingCarrierId !== (l.marketedCarrierId || l.airlineId),
   );
+  const hasUnknownOperating = (legs ?? []).some(isUnknownOperating);
 
   async function lookupCode() {
     setCodeMsg(null);
@@ -113,15 +126,19 @@ export function CheckForm({
         lengthCm: values.petLengthCm ? Number(values.petLengthCm) : null,
         heightCm: values.petHeightCm ? Number(values.petHeightCm) : null,
       },
-      legs: values.legs.map((l) => ({
-        airlineId: l.airlineId,
-        origin: l.origin.trim().toUpperCase(),
-        destination: l.destination.trim().toUpperCase(),
-        cabin: l.cabin,
-        flightNumber: l.flightNumber || null,
-        marketedCarrierId: l.marketedCarrierId || null,
-        operatingCarrierId: l.operatingCarrierId || null,
-      })),
+      legs: values.legs.map((l) => {
+        const unknownOperating = l.operatingCarrierId === UNKNOWN_OPERATING;
+        return {
+          airlineId: l.airlineId,
+          origin: l.origin.trim().toUpperCase(),
+          destination: l.destination.trim().toUpperCase(),
+          cabin: l.cabin,
+          flightNumber: l.flightNumber || null,
+          marketedCarrierId: l.marketedCarrierId || null,
+          operatingCarrierId: unknownOperating ? null : l.operatingCarrierId || null,
+          operatingCarrierUnknown: unknownOperating,
+        };
+      }),
     };
     try {
       const res = await fetch("/api/check", {
@@ -326,6 +343,7 @@ export function CheckForm({
                       {airlines.map((a) => (
                         <option key={a.id} value={a.id}>{a.name}</option>
                       ))}
+                      <option value={UNKNOWN_OPERATING}>Another airline — not listed / unknown</option>
                     </select>
                   </div>
                 </div>
@@ -337,12 +355,24 @@ export function CheckForm({
                     evaluate this leg against its <strong>economy</strong> rule, which may be more conservative.
                   </p>
                 )}
-                {leg?.operatingCarrierId && leg.operatingCarrierId !== leg.airlineId && (
-                  <p className="mt-2 rounded-lg bg-sky-50 px-3 py-2 text-xs text-sky-800">
-                    Rules will be evaluated against the operating carrier, {airlineName(leg.operatingCarrierId)}
-                    {codeshareHere ? " — this looks like a codeshare/partner-operated flight." : "."}
+                {leg && isUnknownOperating(leg) && (
+                  <p className="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-xs text-rose-800">
+                    You marked this leg as operated by an airline we don&apos;t model yet. We&apos;ll show an
+                    indicative result based on {airlineName(leg.marketedCarrierId || leg.airlineId)}, but we
+                    <strong> can&apos;t confirm it</strong> against the policy that actually applies — this leg
+                    will be capped at <strong>BORDERLINE</strong> with reduced confidence. Confirm directly
+                    with the operating airline.
                   </p>
                 )}
+                {leg &&
+                  !isUnknownOperating(leg) &&
+                  leg.operatingCarrierId &&
+                  leg.operatingCarrierId !== leg.airlineId && (
+                    <p className="mt-2 rounded-lg bg-sky-50 px-3 py-2 text-xs text-sky-800">
+                      Rules will be evaluated against the operating carrier, {airlineName(leg.operatingCarrierId)}
+                      {codeshareHere ? " — this looks like a codeshare/partner-operated flight." : "."}
+                    </p>
+                  )}
               </div>
             );
           })}
@@ -359,6 +389,12 @@ export function CheckForm({
           <p className="mt-2 rounded-lg bg-sky-50 px-3 py-2 text-xs text-sky-800">
             A leg may be operated by a partner (codeshare). The operating carrier&apos;s pet policy is what
             applies at the gate — confirm directly with them.
+          </p>
+        )}
+        {hasUnknownOperating && (
+          <p className="mt-2 rounded-lg bg-rose-50 px-3 py-2 text-xs text-rose-800">
+            A leg is operated by an airline we don&apos;t model yet, so that leg is indicative only and
+            can&apos;t be confirmed against the policy that actually applies.
           </p>
         )}
       </section>

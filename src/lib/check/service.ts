@@ -1,4 +1,4 @@
-import type { Airline, Carrier, CheckInput, TripLegInput } from "@/lib/data/types";
+import type { Airline, Carrier, CheckInput } from "@/lib/data/types";
 import {
   evaluateTrip,
   type LegContext,
@@ -17,7 +17,10 @@ export interface AlternativeSuggestion {
   reasons: string[];
 }
 
-export type TripWarningCode = "MULTI_AIRLINE_ITINERARY" | "CODESHARE_PRESENT";
+export type TripWarningCode =
+  | "MULTI_AIRLINE_ITINERARY"
+  | "CODESHARE_PRESENT"
+  | "OPERATING_CARRIER_UNKNOWN";
 
 export interface TripWarning {
   code: TripWarningCode;
@@ -41,18 +44,21 @@ function placeholderAirline(id: string): Airline {
   return { id, name: id, iata: "", country: null };
 }
 
-// Resolve which airline's rule applies: operating carrier takes priority, then
-// marketed carrier, then the booking airline.
-function evalAirlineId(leg: TripLegInput): string {
-  return leg.operatingCarrierId || leg.marketedCarrierId || leg.airlineId;
-}
-
 async function buildLegContexts(input: CheckInput): Promise<LegContext[]> {
   const repo = getRepository();
   return Promise.all(
     input.legs.map(async (leg) => {
       const bookingId = leg.airlineId;
-      const evalId = evalAirlineId(leg);
+      const operatingUnknown = Boolean(leg.operatingCarrierUnknown);
+      const ticketCarrier = leg.marketedCarrierId || leg.airlineId;
+
+      // Resolve which airline's rule applies: operating carrier takes priority,
+      // then marketed, then booking. When the operating carrier is unknown we do
+      // NOT substitute a modeled airline — we evaluate against the ticket carrier
+      // for an indicative result and flag the leg as unconfirmed.
+      const evalId = operatingUnknown
+        ? ticketCarrier
+        : leg.operatingCarrierId || leg.marketedCarrierId || leg.airlineId;
 
       const [bookingAirline, evalAirlineRaw] = await Promise.all([
         repo.getAirline(bookingId),
@@ -65,12 +71,11 @@ async function buildLegContexts(input: CheckInput): Promise<LegContext[]> {
         ? await repo.getRule(evalId, leg.cabin, leg.aircraftType)
         : null;
 
-      const operatingOverride = evalId !== bookingId;
-      // Codeshare: an operating carrier is named and differs from the carrier on
-      // the ticket (marketed, or the booking airline if marketed not specified).
-      const ticketCarrier = leg.marketedCarrierId || leg.airlineId;
-      const codeshare = Boolean(leg.operatingCarrierId && leg.operatingCarrierId !== ticketCarrier);
-      // The requested cabin is "modeled" only if a rule for that exact cabin exists.
+      const operatingOverride = !operatingUnknown && evalId !== bookingId;
+      // Codeshare: an operating carrier is named and differs from the ticket
+      // carrier. Suppressed when unknown (we surface OPERATING_CARRIER_UNKNOWN).
+      const codeshare =
+        !operatingUnknown && Boolean(leg.operatingCarrierId && leg.operatingCarrierId !== ticketCarrier);
       const cabinModeled = Boolean(rule && rule.cabin === leg.cabin);
 
       return {
@@ -82,6 +87,7 @@ async function buildLegContexts(input: CheckInput): Promise<LegContext[]> {
           bookingAirline: booking,
           operatingOverride,
           codeshare,
+          operatingUnknown,
           cabinModeled,
         },
       } satisfies LegContext;
@@ -106,6 +112,14 @@ function buildWarnings(contexts: LegContext[]): TripWarning[] {
       code: "CODESHARE_PRESENT",
       message:
         "One or more legs may be operated by a partner airline (codeshare). The operating carrier's pet policy is the one that applies at the gate — confirm it with that carrier.",
+    });
+  }
+
+  if (contexts.some((c) => c.meta?.operatingUnknown)) {
+    warnings.push({
+      code: "OPERATING_CARRIER_UNKNOWN",
+      message:
+        "One or more legs are operated by an airline we don't model yet. Those legs are indicative only — we can't confirm them against the policy that actually applies, so confidence is reduced. Confirm the pet policy directly with the operating airline.",
     });
   }
 

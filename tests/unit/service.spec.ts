@@ -108,6 +108,44 @@ describe("runCheck (static seed)", () => {
     expect(leg.reasons.some((r) => r.code === "CABIN_NOT_MODELED")).toBe(false);
   });
 
+  it("caps an unknown operating carrier at BORDERLINE with low confidence", async () => {
+    const input: CheckInput = {
+      // A carrier that would otherwise PASS on Air Canada economy.
+      carrierId: "sherpa-original-md",
+      pet: { species: "cat", weightKg: 4 },
+      legs: [
+        {
+          airlineId: "air-canada",
+          operatingCarrierUnknown: true,
+          origin: "YYZ",
+          destination: "YVR",
+          cabin: "economy",
+        },
+      ],
+    };
+    const res = await runCheck(input);
+    const leg = res.result.legs[0];
+    expect(leg.operatingUnknown).toBe(true);
+    expect(leg.operatingOverride).toBe(false); // no modeled substitute used
+    expect(leg.airlineId).toBe("air-canada"); // evaluated against the ticket carrier
+    expect(leg.confidence).toBe("low");
+    expect(leg.verdict).toBe("BORDERLINE"); // would be PASS, downgraded
+    expect(leg.reasons.some((r) => r.code === "OPERATING_CARRIER_UNKNOWN")).toBe(true);
+    expect(res.warnings.some((w) => w.code === "OPERATING_CARRIER_UNKNOWN")).toBe(true);
+  });
+
+  it("does not let an unknown operating carrier rescue a hard NO", async () => {
+    const input: CheckInput = {
+      carrierId: "petmate-sky-100", // oversized hard kennel
+      pet: { species: "dog", weightKg: 6 },
+      legs: [
+        { airlineId: "jetblue", operatingCarrierUnknown: true, origin: "JFK", destination: "BOS", cabin: "economy" },
+      ],
+    };
+    const res = await runCheck(input);
+    expect(res.result.legs[0].verdict).toBe("NO");
+  });
+
   it("throws on an unknown carrier", async () => {
     await expect(
       runCheck({ carrierId: "does-not-exist", pet: { species: "dog", weightKg: 5 }, legs: [{ airlineId: "delta", ...baseLeg }] }),

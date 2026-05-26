@@ -26,6 +26,7 @@ export const tripLegSchema = z.object({
   aircraftType: z.string().max(40).optional().nullable(),
   marketedCarrierId: z.string().max(60).optional().nullable(),
   operatingCarrierId: z.string().max(60).optional().nullable(),
+  operatingCarrierUnknown: z.boolean().optional().nullable(),
 });
 
 export const checkInputSchema = z.object({

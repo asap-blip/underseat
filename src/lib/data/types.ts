@@ -103,6 +103,10 @@ export interface TripLegInput {
   // The carrier that actually operates the flight. When present and different,
   // it takes priority for rule evaluation (its pet policy is what applies).
   operatingCarrierId?: string | null;
+  // Set when the traveler knows the flight is operated by a different airline
+  // but that airline isn't in our modeled list. We do NOT substitute a modeled
+  // airline; instead the leg is treated as indicative only (capped confidence).
+  operatingCarrierUnknown?: boolean | null;
 }
 
 export interface CheckInput {

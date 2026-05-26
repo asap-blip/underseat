@@ -22,6 +22,7 @@ export type ReasonCode =
   | "PET_COMFORT_UNCERTAIN"
   | "CABIN_NOT_MODELED"
   | "OPERATING_CARRIER_USED"
+  | "OPERATING_CARRIER_UNKNOWN"
   | "CODESHARE_PARTNER_OPERATED"
   | "FINAL_APPROVAL_AIRLINE_DISCRETION";
 
@@ -51,6 +52,8 @@ export const REASON_LABELS: Record<ReasonCode, string> = {
   PET_COMFORT_UNCERTAIN: "No pet measurements provided; comfort could not be assessed",
   CABIN_NOT_MODELED: "This cabin isn't separately modeled; evaluated against the airline's economy rule",
   OPERATING_CARRIER_USED: "Evaluated against the operating carrier's rule, not the booking airline",
+  OPERATING_CARRIER_UNKNOWN:
+    "This leg is operated by an airline we don't model yet, so it can't be confirmed against the policy that actually applies — treat this leg as indicative only",
   CODESHARE_PARTNER_OPERATED: "Possible codeshare: a partner may operate this flight — confirm the pet policy with the operating carrier",
   FINAL_APPROVAL_AIRLINE_DISCRETION: "Final acceptance is always at the airline's discretion at the gate",
 };

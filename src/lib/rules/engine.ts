@@ -49,6 +49,9 @@ export interface LegResult {
   operatingOverride: boolean;
   // True when this leg may be operated by a partner (codeshare).
   codeshare: boolean;
+  // True when the operating airline is known to differ but isn't modeled, so the
+  // verdict is indicative only (confidence capped, PASS downgraded to BORDERLINE).
+  operatingUnknown: boolean;
   // True when the requested cabin had its own modeled rule; false => economy fallback.
   cabinModeled: boolean;
   verdict: Verdict;
@@ -66,6 +69,7 @@ export interface LegMeta {
   bookingAirline: Airline;
   operatingOverride: boolean;
   codeshare: boolean;
+  operatingUnknown: boolean;
   cabinModeled: boolean;
 }
 
@@ -152,11 +156,15 @@ export function evaluateLeg(
   const bookingAirline = meta?.bookingAirline ?? airline;
   const operatingOverride = meta?.operatingOverride ?? false;
   const codeshare = meta?.codeshare ?? false;
+  const operatingUnknown = meta?.operatingUnknown ?? false;
   const cabinModeled = meta?.cabinModeled ?? (rule ? rule.cabin === leg.cabin : false);
 
-  // Advisory reasons that never change the verdict but must be visible.
+  // Advisory reasons. Most are info (don't change the verdict), but an unknown
+  // operating carrier is a `warn`: without the airline that actually applies, we
+  // must not return a confident PASS.
   if (operatingOverride) reasons.push(reason("OPERATING_CARRIER_USED", "info"));
-  if (codeshare) reasons.push(reason("CODESHARE_PARTNER_OPERATED", "info"));
+  if (operatingUnknown) reasons.push(reason("OPERATING_CARRIER_UNKNOWN", "warn"));
+  if (codeshare && !operatingUnknown) reasons.push(reason("CODESHARE_PARTNER_OPERATED", "info"));
   if (!cabinModeled && rule) reasons.push(reason("CABIN_NOT_MODELED", "info"));
 
   const legFlags = {
@@ -164,6 +172,7 @@ export function evaluateLeg(
     bookingAirlineName: bookingAirline.name,
     operatingOverride,
     codeshare,
+    operatingUnknown,
     cabinModeled,
   };
 
@@ -332,6 +341,8 @@ export function evaluateLeg(
   ) {
     confidence = "medium";
   }
+  // The actual operating airline isn't modeled: this is indicative only.
+  if (operatingUnknown) confidence = "low";
 
   return {
     legIndex,

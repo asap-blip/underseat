@@ -171,6 +171,12 @@ verdict from the **worst leg** (NO > BORDERLINE > PASS).
 - Trip-level warnings appear when the itinerary **uses more than one airline**
   (acceptance does not carry over) and when a **codeshare / partner-operated**
   flight is detected. Per-leg "Possible codeshare" badges mark the affected legs.
+- **Unknown operating carrier:** if the real operating airline isn't in our list,
+  the user picks "Another airline — not listed / unknown" instead of a misleading
+  substitute. That leg is evaluated against the ticket carrier for an indicative
+  result, but is **capped at BORDERLINE with low confidence**, carries an
+  `OPERATING_CARRIER_UNKNOWN` reason and an "Operating airline not modeled ·
+  indicative only" badge, and raises a trip warning — so we never fake precision.
 - Every leg result shows its source URL + last-verified date, and says so plainly
   when the data is incomplete.
 
