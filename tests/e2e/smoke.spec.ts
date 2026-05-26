@@ -43,11 +43,11 @@ test("admin can update a rule's verification", async ({ request }) => {
 
 test("admin can update a carrier's verification", async ({ request }) => {
   const res = await request.patch("/api/admin/carriers/frisco-soft", {
-    data: { verification: "verified", verifiedAt: "2026-05-25", heightCm: 28 },
+    data: { verification: "team_verified", verifiedAt: "2026-05-25", heightCm: 28 },
   });
   expect(res.ok()).toBeTruthy();
   const body = await res.json();
-  expect(body.carrier.verification).toBe("verified");
+  expect(body.carrier.verification).toBe("team_verified");
 });
 
 test("merchant demo embeds a working widget", async ({ page }) => {

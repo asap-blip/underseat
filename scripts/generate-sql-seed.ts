@@ -44,8 +44,8 @@ for (const a of airlines) {
 lines.push("", "-- carriers");
 for (const c of carriers) {
   lines.push(
-    `insert into public.carriers (id, brand, model, sku, soft_sided, length_cm, width_cm, height_cm, weight_kg, max_pet_weight_kg, verification, verified_at, image_url, affiliate_url, affiliate_targets, price_usd, description) values (` +
-      `${s(c.id)}, ${s(c.brand)}, ${s(c.model)}, ${s(c.sku)}, ${b(c.softSided)}, ${n(c.lengthCm)}, ${n(c.widthCm)}, ${n(c.heightCm)}, ${n(c.weightKg)}, ${n(c.maxPetWeightKg)}, ${s(c.verification)}, ${s(c.verifiedAt)}, ${s(c.imageUrl)}, ${s(c.affiliateUrl)}, ${j(c.affiliateTargets ?? {})}, ${n(c.priceUsd)}, ${s(c.description)}) on conflict (id) do nothing;`,
+    `insert into public.carriers (id, brand, model, sku, soft_sided, length_cm, width_cm, height_cm, weight_kg, max_pet_weight_kg, verification, verified_at, traveler_reports, image_url, affiliate_url, affiliate_targets, price_usd, description) values (` +
+      `${s(c.id)}, ${s(c.brand)}, ${s(c.model)}, ${s(c.sku)}, ${b(c.softSided)}, ${n(c.lengthCm)}, ${n(c.widthCm)}, ${n(c.heightCm)}, ${n(c.weightKg)}, ${n(c.maxPetWeightKg)}, ${s(c.verification)}, ${s(c.verifiedAt)}, ${n(c.travelerReports)}, ${s(c.imageUrl)}, ${s(c.affiliateUrl)}, ${j(c.affiliateTargets ?? {})}, ${n(c.priceUsd)}, ${s(c.description)}) on conflict (id) do nothing;`,
   );
 }
 

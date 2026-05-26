@@ -34,7 +34,7 @@ function carrier(overrides: Partial<Carrier> = {}): Carrier {
     widthCm: 27,
     heightCm: 23,
     weightKg: 1,
-    verification: "verified",
+    verification: "team_verified",
     ...overrides,
   };
 }

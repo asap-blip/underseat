@@ -3,12 +3,13 @@
 import { useState } from "react";
 import type { Carrier, VerificationStatus } from "@/lib/data/types";
 import { FreshnessBadge } from "./SourceCitation";
+import { CARRIER_STATUS } from "@/lib/carrierStatus";
 
 const input =
   "w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100";
 const label = "block text-[11px] font-medium text-slate-500 mb-1";
 
-const VERIFICATIONS: VerificationStatus[] = ["verified", "unverified", "community"];
+const VERIFICATIONS = Object.keys(CARRIER_STATUS) as VerificationStatus[];
 
 type Editable = {
   lengthCm: string;
@@ -127,7 +128,7 @@ function CarrierRow({ carrier, token }: { carrier: Carrier; token: string }) {
           <label className={label}>Verification</label>
           <select className={input} value={form.verification} onChange={(e) => set("verification", e.target.value as VerificationStatus)}>
             {VERIFICATIONS.map((v) => (
-              <option key={v} value={v}>{v}</option>
+              <option key={v} value={v}>{CARRIER_STATUS[v].label}</option>
             ))}
           </select>
         </div>

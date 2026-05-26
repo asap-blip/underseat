@@ -67,7 +67,13 @@ export const ruleUpdateSchema = z
 
 export type RuleUpdateParsed = z.infer<typeof ruleUpdateSchema>;
 
-export const verificationSchema = z.enum(["verified", "unverified", "community"]);
+export const verificationSchema = z.enum([
+  "team_verified",
+  "traveler_reported",
+  "not_verified_yet",
+  "failed_check",
+  "needs_review",
+]);
 
 // Editable fields for the admin carrier-update workflow (PATCH-style).
 export const carrierUpdateSchema = z

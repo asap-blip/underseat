@@ -7,7 +7,18 @@ export type PetSpecies = "dog" | "cat" | "rabbit" | "bird" | "other";
 
 export type SoftSidedRequirement = "required" | "recommended" | null;
 
-export type VerificationStatus = "verified" | "unverified" | "community";
+// Evidence-based carrier status. Drives a single primary badge + a secondary
+// evidence line in the UI. Extensible: failed_check / needs_review are wired
+// through the config even though the seed doesn't use them yet.
+export type CarrierStatus =
+  | "team_verified" // we checked this exact model/size against the airline's published rules
+  | "traveler_reported" // travelers reported it worked; reviewed but not independently verified
+  | "not_verified_yet" // not enough current data for this carrier yet
+  | "failed_check" // doesn't match the airline rule data we have on file
+  | "needs_review"; // needs manual review before we can label it
+
+// Kept as an alias so existing references to the type name keep working.
+export type VerificationStatus = CarrierStatus;
 
 // Where a rule's numbers came from, so users can judge how much to trust them.
 export type SourceType =
@@ -40,6 +51,8 @@ export interface Carrier {
   verification: VerificationStatus;
   // When the carrier's dimensions were last confirmed (drives freshness).
   verifiedAt?: string | null;
+  // Number of traveler reports on file (drives the "N traveler reports" line).
+  travelerReports?: number | null;
   imageUrl?: string | null;
   // Affiliate URL(s). The primary is used for outbound buttons; the map allows
   // per-network overrides that can be swapped by an admin later.

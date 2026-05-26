@@ -13,7 +13,7 @@ function carrier(over: Partial<Carrier> & { id: string }): Carrier {
     heightCm: 28,
     weightKg: 1,
     maxPetWeightKg: 8,
-    verification: "verified",
+    verification: "team_verified",
     ...over,
   };
 }

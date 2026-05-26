@@ -41,8 +41,8 @@ export function recommendCarriers(pet: PetInput, carriers: Carrier[]): CarrierRe
   return recs.sort((a, b) => {
     if (fitRank[a.fit] !== fitRank[b.fit]) return fitRank[a.fit] - fitRank[b.fit];
     // Among equal fit, prefer verified, then smaller (more airline-friendly).
-    const av = a.carrier.verification === "verified" ? 0 : 1;
-    const bv = b.carrier.verification === "verified" ? 0 : 1;
+    const av = a.carrier.verification === "team_verified" ? 0 : 1;
+    const bv = b.carrier.verification === "team_verified" ? 0 : 1;
     if (av !== bv) return av - bv;
     return volume(a.carrier) - volume(b.carrier);
   });
@@ -95,7 +95,7 @@ function evaluateFit(pet: PetInput, carrier: Carrier): CarrierRecommendation {
     );
   }
   if (carrier.softSided) reasons.push("Soft-sided, so it fits more airline cabins");
-  if (carrier.verification === "verified") reasons.push("Dimensions independently verified");
+  if (carrier.verification === "team_verified") reasons.push("Dimensions verified by our team");
   if (!measurementsUsed) reasons.push("Based on weight only — add measurements for a size check");
 
   return { carrier, fit, reasons, lengthHeadroomCm, heightHeadroomCm, weightOk, measurementsUsed };

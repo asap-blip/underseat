@@ -35,18 +35,18 @@ describe("repository updateRule (static)", () => {
     const repo = getRepository();
     const updated = await repo.updateCarrier("frisco-soft", {
       heightCm: 26,
-      verification: "verified",
+      verification: "team_verified",
       verifiedAt: "2026-05-25",
     });
     expect(updated?.heightCm).toBe(26);
-    expect(updated?.verification).toBe("verified");
+    expect(updated?.verification).toBe("team_verified");
 
     const reread = await repo.getCarrier("frisco-soft");
     expect(reread?.heightCm).toBe(26);
     expect(reread?.verifiedAt).toBe("2026-05-25");
 
     // restore
-    await repo.updateCarrier("frisco-soft", { heightCm: 28, verification: "verified", verifiedAt: "2026-03-15" });
+    await repo.updateCarrier("frisco-soft", { heightCm: 28, verification: "team_verified", verifiedAt: "2026-03-15" });
   });
 
   it("returns null for an unknown carrier id", async () => {
