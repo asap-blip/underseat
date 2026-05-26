@@ -8,6 +8,8 @@ export interface ChangelogEntry {
 // Lightweight, hand-maintained feed of rule/coverage updates. Keep it short and
 // honest — it exists to show the data is actively maintained, not for marketing.
 export const CHANGELOG: ChangelogEntry[] = [
+  { date: "2026-05-26", summary: "Re-verified all 8 airlines against current public policy (May 2026). Corrected Air Canada and Lufthansa to soft-sided-required, and JetBlue to allow hard-sided (soft preferred). Sources cross-checked against current guides; airlines' own pages couldn't be fetched directly (bot-protected), so values reflect current published policy as cited by those sources." },
+  { date: "2026-05-26", summary: "Fixed United/Alaska hard-carrier notes, clarified American soft vs hard limits, and documented Southwest's 8.5/9.5 in height ambiguity (using the conservative figure)." },
   { date: "2026-01-15", summary: "Verified Air Canada and Lufthansa in-cabin limits against their official policy pages." },
   { date: "2026-01-12", summary: "Added United and Delta; flagged Delta as having no fixed published dimensions." },
   { date: "2026-01-09", summary: "Added American, Southwest, JetBlue and Alaska economy rules with source links." },

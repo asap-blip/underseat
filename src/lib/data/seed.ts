@@ -43,14 +43,15 @@ export const airlineRules: AirlineRule[] = [
     maxWidthCm: 40,
     maxHeightCm: 27,
     maxCombinedWeightKg: 10,
-    softSidedRequirement: "recommended",
+    softSidedRequirement: "required",
     aircraftVaries: false,
-    notes: "Soft carrier max 55x40x27 cm. Pet + carrier must not exceed 10 kg.",
+    notes:
+      "Soft-sided carrier required in cabin since 1 Jun 2025. Soft max 55x40x27 cm (hard 55x40x23 cm no longer permitted in cabin). Pet + carrier must not exceed 10 kg.",
     sourceUrl:
       "https://www.aircanada.com/ca/en/aco/home/plan/special-assistance/pets.html",
     sourceLabel: "Air Canada — Travelling with pets",
     sourceType: "airline_official",
-    lastVerifiedAt: "2026-01-15",
+    lastVerifiedAt: "2026-05-26",
   },
   {
     id: "delta-economy",
@@ -66,11 +67,11 @@ export const airlineRules: AirlineRule[] = [
     softSidedRequirement: "recommended",
     aircraftVaries: true,
     notes:
-      "No fixed published dimensions; soft carrier must fit fully under the seat in front of you. Under-seat space varies by aircraft.",
+      "No guaranteed published maximum; the kennel must fit under the seat, which varies by aircraft. Delta recommends a soft kennel up to 18x11x11 in but confirms exact size by flight. Modelled as incomplete on purpose.",
     sourceUrl: "https://www.delta.com/us/en/pet-travel/overview",
     sourceLabel: "Delta — Pet travel overview",
     sourceType: "airline_official",
-    lastVerifiedAt: "2026-01-10",
+    lastVerifiedAt: "2026-05-26",
   },
   {
     id: "united-economy",
@@ -85,12 +86,12 @@ export const airlineRules: AirlineRule[] = [
     softSidedRequirement: "recommended",
     aircraftVaries: true,
     notes:
-      "Soft carrier max 18x11x11 in. Hard carrier max 17.5x12x7.5 in. Under-seat clearance varies by aircraft.",
+      "Soft carrier max 18x11x11 in (modelled). Hard carrier max 17.5x12x9 in. No published weight limit. Under-seat clearance varies by aircraft.",
     sourceUrl:
       "https://www.united.com/en/us/fly/travel/special-needs/pets.html",
     sourceLabel: "United — Travelling with pets",
     sourceType: "airline_official",
-    lastVerifiedAt: "2026-01-12",
+    lastVerifiedAt: "2026-05-26",
   },
   {
     id: "american-economy",
@@ -103,12 +104,13 @@ export const airlineRules: AirlineRule[] = [
     maxCombinedWeightKg: null,
     softSidedRequirement: "recommended",
     aircraftVaries: false,
-    notes: "Kennel max 19x13x9 in; soft-sided collapsible carriers preferred.",
+    notes:
+      "Hard kennel max 19x13x9 in (modelled); soft carrier max 18x11x11 in and preferred. Combined weight commonly cited as ~20 lb but AA does not publish a single in-cabin figure, so weight is left unmodeled — confirm with AA.",
     sourceUrl:
       "https://www.aa.com/i18n/travel-info/special-assistance/pets.jsp",
     sourceLabel: "American Airlines — Traveling with pets",
     sourceType: "airline_official",
-    lastVerifiedAt: "2026-01-08",
+    lastVerifiedAt: "2026-05-26",
   },
   {
     id: "southwest-economy",
@@ -121,12 +123,13 @@ export const airlineRules: AirlineRule[] = [
     maxCombinedWeightKg: null,
     softSidedRequirement: null,
     aircraftVaries: false,
-    notes: "Carrier max 18.5x8.5x13.5 in. Hard or soft permitted.",
+    notes:
+      "Carrier max 18.5x8.5x13.5 in; hard or soft permitted. Sources differ on the small dimension (8.5 vs 9.5 in) — we use the more conservative 8.5 in. No published weight limit.",
     sourceUrl:
       "https://www.southwest.com/help/traveling-with-pets",
     sourceLabel: "Southwest — Traveling with pets",
     sourceType: "airline_official",
-    lastVerifiedAt: "2026-01-09",
+    lastVerifiedAt: "2026-05-26",
   },
   {
     id: "jetblue-economy",
@@ -137,14 +140,14 @@ export const airlineRules: AirlineRule[] = [
     maxWidthCm: inch(12.5),
     maxHeightCm: inch(8.5),
     maxCombinedWeightKg: lb(20),
-    softSidedRequirement: "required",
+    softSidedRequirement: "recommended",
     aircraftVaries: false,
     notes:
-      "Soft carrier only, max 17x12.5x8.5 in. Combined pet + carrier max 20 lb.",
+      "Carrier max 17x12.5x8.5 in. Both soft and hard carriers are allowed; soft is preferred. Combined pet + carrier max 20 lb.",
     sourceUrl: "https://www.jetblue.com/traveling-together/traveling-with-pets",
     sourceLabel: "JetBlue — Traveling with pets",
     sourceType: "airline_official",
-    lastVerifiedAt: "2026-01-11",
+    lastVerifiedAt: "2026-05-26",
   },
   {
     id: "alaska-economy",
@@ -158,12 +161,13 @@ export const airlineRules: AirlineRule[] = [
     maxCombinedWeightKg: null,
     softSidedRequirement: "recommended",
     aircraftVaries: false,
-    notes: "Soft carrier max 17x11x9.5 in; hard carrier max 17x11x7.5 in.",
+    notes:
+      "Soft carrier max 17x11x9.5 in (modelled); hard carrier max 17x11x7.5 in. No published weight limit; hard carriers may not fit under all aircraft seats.",
     sourceUrl:
       "https://www.alaskaair.com/content/travel-info/policies/pets-traveling-with-pets",
     sourceLabel: "Alaska Airlines — Pets traveling with you",
     sourceType: "airline_official",
-    lastVerifiedAt: "2026-01-07",
+    lastVerifiedAt: "2026-05-26",
   },
   {
     id: "lufthansa-economy",
@@ -174,15 +178,15 @@ export const airlineRules: AirlineRule[] = [
     maxWidthCm: 40,
     maxHeightCm: 23,
     maxCombinedWeightKg: 8,
-    softSidedRequirement: "recommended",
+    softSidedRequirement: "required",
     aircraftVaries: false,
     notes:
-      "Carrier max 55x40x23 cm. Combined pet + carrier max 8 kg in cabin.",
+      "Soft-sided carrier required in cabin. Carrier max 55x40x23 cm. Combined pet + carrier max 8 kg in cabin.",
     sourceUrl:
       "https://www.lufthansa.com/de/en/travelling-with-animals",
     sourceLabel: "Lufthansa — Travelling with animals",
     sourceType: "airline_official",
-    lastVerifiedAt: "2026-01-14",
+    lastVerifiedAt: "2026-05-26",
   },
   // A business-cabin variant to demonstrate cabin-specific differences.
   {
@@ -194,15 +198,15 @@ export const airlineRules: AirlineRule[] = [
     maxWidthCm: 40,
     maxHeightCm: 23,
     maxCombinedWeightKg: 8,
-    softSidedRequirement: "recommended",
+    softSidedRequirement: "required",
     aircraftVaries: true,
     notes:
-      "Same carrier limits as economy, but lie-flat seat footwells vary by aircraft.",
+      "Soft-sided carrier required. Same 55x40x23 cm / 8 kg limits as economy, but lie-flat seat footwells vary by aircraft.",
     sourceUrl:
       "https://www.lufthansa.com/de/en/travelling-with-animals",
     sourceLabel: "Lufthansa — Travelling with animals (business)",
     sourceType: "airline_official",
-    lastVerifiedAt: "2026-01-14",
+    lastVerifiedAt: "2026-05-26",
   },
 ];
 
