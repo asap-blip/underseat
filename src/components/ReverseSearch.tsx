@@ -58,7 +58,7 @@ export function ReverseSearch({ carriers }: { carriers: Carrier[] }) {
             <input type="number" step="0.5" className={input} value={lengthCm} onChange={(e) => setLengthCm(e.target.value)} />
           </div>
           <div>
-            <label className={label}>Standing height (cm, optional)</label>
+            <label className={label}>Standing height (cm · floor to head/ears, optional)</label>
             <input type="number" step="0.5" className={input} value={heightCm} onChange={(e) => setHeightCm(e.target.value)} />
           </div>
         </div>

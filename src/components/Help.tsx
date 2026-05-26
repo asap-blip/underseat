@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { PetMeasureVisual } from "./PetMeasureVisual";
 
 // Lightweight, mobile-friendly in-flow help. Uses native <details> so it needs
 // no JS, collapses by default, and never clutters the page. Keep content short
@@ -26,6 +27,7 @@ function Term({ label, children }: { label: string; children: ReactNode }) {
 export function PetMeasureHelp() {
   return (
     <HelpPanel title="How to measure your pet">
+      <PetMeasureVisual />
       <Term label="Length">measure from the nose to the base of the tail (don&apos;t include the tail).</Term>
       <Term label="Standing height">floor to the top of the shoulders or head while your pet stands normally.</Term>
       <Term label="Width">across the widest point (shoulders or hips) — handy when comparing carriers.</Term>

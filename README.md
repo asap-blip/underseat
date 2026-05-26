@@ -208,7 +208,10 @@ Core tasks are explained in-place so users don't leave to look things up. All
 helpers are collapsed-by-default native `<details>` panels (`src/components/Help.tsx`)
 — no JS, mobile-friendly, and they never clutter the page:
 
-- **How to measure your pet** — pet section of `/check` and the `/find` form.
+- **How to measure your pet** — pet section of `/check` and the `/find` form. Includes
+  a **visual SVG guide** (`PetMeasureVisual`) with a dog/cat toggle showing length
+  (nose→tail base), height (floor→head/ears) and widest-body arrows, plus inline
+  field hints next to the length/height inputs.
 - **How to measure your carrier** — carrier section of `/check`.
 - **How to find your airline, operating carrier & cabin** — itinerary section of `/check`.
 - **What PASS / BORDERLINE / NO mean** — results page (reiterates "checker, not a guarantee").
@@ -236,7 +239,9 @@ Designed to be safe to soft-launch: every verdict shows how much to trust it and
   "Rules last updated" badge, a recent-updates changelog (`src/lib/changelog.ts`),
   and a **"Missing an airline?"** form (`POST /api/airline-requests` →
   `airline_requests` table) so coverage gaps become research input instead of
-  fake support.
+  fake support. A matching **"Don't see your carrier?"** form (`POST
+  /api/carrier-requests` → `carrier_requests` table) sits on `/carriers` and
+  `/find` to capture catalog gaps.
 
 ## Rules & Sources (transparency layer)
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CarrierBrowser } from "@/components/CarrierBrowser";
+import { SuggestCarrier } from "@/components/SuggestCarrier";
 import { getRepository } from "@/lib/data/repository";
 
 export const dynamic = "force-dynamic";
@@ -21,6 +22,7 @@ export default async function CarriersPage() {
         </p>
       </div>
       <CarrierBrowser carriers={carriers} />
+      <SuggestCarrier />
     </div>
   );
 }

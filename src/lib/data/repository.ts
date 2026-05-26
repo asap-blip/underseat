@@ -45,6 +45,12 @@ export interface AirlineRequestRecord {
   note?: string | null;
 }
 
+export interface CarrierRequestRecord {
+  carrier: string;
+  email?: string | null;
+  note?: string | null;
+}
+
 export interface Repository {
   listCarriers(query?: string): Promise<Carrier[]>;
   getCarrier(id: string): Promise<Carrier | null>;
@@ -66,6 +72,7 @@ export interface Repository {
   recordCheck(record: CheckRecord): Promise<string>;
   recordClick(record: ClickRecord): Promise<void>;
   recordAirlineRequest(record: AirlineRequestRecord): Promise<void>;
+  recordCarrierRequest(record: CarrierRequestRecord): Promise<void>;
 }
 
 function matchesQuery(carrier: Carrier, q: string): boolean {
@@ -176,6 +183,9 @@ class StaticRepository implements Repository {
   }
   async recordAirlineRequest(record: AirlineRequestRecord): Promise<void> {
     console.info("[flypewpet] airline_request (static):", record.airline, record.cabin ?? "", record.email ?? "");
+  }
+  async recordCarrierRequest(record: CarrierRequestRecord): Promise<void> {
+    console.info("[flypewpet] carrier_request (static):", record.carrier, record.email ?? "");
   }
 }
 
@@ -402,6 +412,15 @@ class SupabaseRepository implements Repository {
     await sb.from("airline_requests").insert({
       airline: record.airline,
       cabin: record.cabin ?? null,
+      email: record.email ?? null,
+      note: record.note ?? null,
+    });
+  }
+  async recordCarrierRequest(record: CarrierRequestRecord): Promise<void> {
+    const sb = getServiceSupabase() ?? getSupabase();
+    if (!sb) return;
+    await sb.from("carrier_requests").insert({
+      carrier: record.carrier,
       email: record.email ?? null,
       note: record.note ?? null,
     });

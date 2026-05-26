@@ -225,11 +225,11 @@ export function CheckForm({
             <input type="number" step="0.1" min="0.1" className={input} {...register("weightKg", { valueAsNumber: true })} />
           </div>
           <div>
-            <label className={label}>Length (cm, optional)</label>
+            <label className={label}>Length <span className="font-normal text-slate-400">(cm · nose to base of tail)</span></label>
             <input type="number" step="0.5" className={input} {...register("petLengthCm", { valueAsNumber: true })} />
           </div>
           <div>
-            <label className={label}>Standing height (cm, optional)</label>
+            <label className={label}>Standing height <span className="font-normal text-slate-400">(cm · floor to head/ears)</span></label>
             <input type="number" step="0.5" className={input} {...register("petHeightCm", { valueAsNumber: true })} />
           </div>
         </div>

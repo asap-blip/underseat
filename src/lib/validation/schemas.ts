@@ -98,3 +98,12 @@ export const airlineRequestSchema = z.object({
 });
 
 export type AirlineRequestParsed = z.infer<typeof airlineRequestSchema>;
+
+// "Suggest a carrier" capture. Only the carrier name is required.
+export const carrierRequestSchema = z.object({
+  carrier: z.string().min(2).max(120),
+  email: z.string().email().max(160).optional().or(z.literal("")).nullable(),
+  note: z.string().max(300).optional().nullable(),
+});
+
+export type CarrierRequestParsed = z.infer<typeof carrierRequestSchema>;

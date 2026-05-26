@@ -1,4 +1,5 @@
 import { ReverseSearch } from "@/components/ReverseSearch";
+import { SuggestCarrier } from "@/components/SuggestCarrier";
 import { getRepository } from "@/lib/data/repository";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +20,7 @@ export default async function FindPage() {
         </p>
       </div>
       <ReverseSearch carriers={carriers} />
+      <SuggestCarrier />
     </div>
   );
 }
