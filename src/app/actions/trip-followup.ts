@@ -45,7 +45,9 @@ export async function submitTripFollowup(input: unknown): Promise<TripFollowupRe
     utm_medium: d.utmMedium || null,
     utm_campaign: d.utmCampaign || null,
     consent_followup: d.consentFollowup,
-    followup_status: "scheduled" as const,
+    // 'pending' = due to send but not yet sent; the n8n follow-up workflow
+    // picks these up and flips them to 'sent'.
+    followup_status: "pending" as const,
     followup_send_at: followupSendAt.toISOString(),
     reminder_send_at: reminderSendAt.toISOString(),
   };
