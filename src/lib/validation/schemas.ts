@@ -113,3 +113,21 @@ export const carrierRequestSchema = z.object({
 });
 
 export type CarrierRequestParsed = z.infer<typeof carrierRequestSchema>;
+
+const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD");
+
+// Trip follow-up opt-in capture. Email + departure date + consent are required.
+export const tripFollowupSchema = z.object({
+  email: z.string().email().max(160),
+  carrierId: z.string().max(60).optional().nullable(),
+  airlineId: z.string().max(60).optional().nullable(),
+  departureDate: isoDate,
+  returnDate: isoDate.optional().nullable().or(z.literal("")),
+  routeText: z.string().max(200).optional().nullable(),
+  consentFollowup: z.boolean(),
+  utmSource: z.string().max(120).optional().nullable(),
+  utmMedium: z.string().max(120).optional().nullable(),
+  utmCampaign: z.string().max(120).optional().nullable(),
+});
+
+export type TripFollowupParsed = z.infer<typeof tripFollowupSchema>;
