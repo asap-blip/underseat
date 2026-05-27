@@ -3,9 +3,19 @@ import type {
   AirlineRule,
   Carrier,
   CabinType,
+  CarrierVerification,
   Merchant,
   MerchantProduct,
+  ModerationStatus,
+  TravelerReport,
 } from "./types";
+import {
+  confidenceFromTally,
+  deriveTravelerStatus,
+  isTeamControlled,
+  tallyReports,
+  travelerExplanation,
+} from "@/lib/verification";
 import type { TripResult, Verdict } from "@/lib/rules/engine";
 import {
   airlineRules,
@@ -73,6 +83,11 @@ export interface Repository {
   recordClick(record: ClickRecord): Promise<void>;
   recordAirlineRequest(record: AirlineRequestRecord): Promise<void>;
   recordCarrierRequest(record: CarrierRequestRecord): Promise<void>;
+  // Moderation + verification aggregation.
+  listTravelerReports(moderationStatus?: ModerationStatus): Promise<TravelerReport[]>;
+  moderateReport(id: string, moderationStatus: ModerationStatus): Promise<TravelerReport | null>;
+  getVerification(carrierId: string, airlineId: string): Promise<CarrierVerification | null>;
+  recomputeVerification(carrierId: string, airlineId: string): Promise<CarrierVerification | null>;
 }
 
 function matchesQuery(carrier: Carrier, q: string): boolean {
@@ -186,6 +201,19 @@ class StaticRepository implements Repository {
   }
   async recordCarrierRequest(record: CarrierRequestRecord): Promise<void> {
     console.info("[flypewpet] carrier_request (static):", record.carrier, record.email ?? "");
+  }
+  // Traveler reports / verification aggregates live only in Supabase.
+  async listTravelerReports(): Promise<TravelerReport[]> {
+    return [];
+  }
+  async moderateReport(): Promise<TravelerReport | null> {
+    return null;
+  }
+  async getVerification(): Promise<CarrierVerification | null> {
+    return null;
+  }
+  async recomputeVerification(): Promise<CarrierVerification | null> {
+    return null;
   }
 }
 
@@ -426,6 +454,121 @@ class SupabaseRepository implements Repository {
       note: record.note ?? null,
     });
   }
+  async listTravelerReports(moderationStatus?: ModerationStatus): Promise<TravelerReport[]> {
+    const sb = getServiceSupabase() ?? getSupabase();
+    if (!sb) return [];
+    let q = sb.from("traveler_reports").select("*").order("created_at", { ascending: false });
+    if (moderationStatus) q = q.eq("moderation_status", moderationStatus);
+    const { data, error } = await q;
+    if (error) throw error;
+    return (data ?? []).map(reportFromRow);
+  }
+  async moderateReport(id: string, moderationStatus: ModerationStatus): Promise<TravelerReport | null> {
+    const sb = getServiceSupabase() ?? getSupabase();
+    if (!sb) return null;
+    const { data, error } = await sb
+      .from("traveler_reports")
+      .update({ moderation_status: moderationStatus, reviewed_at: new Date().toISOString() })
+      .eq("id", id)
+      .select("*")
+      .maybeSingle();
+    if (error) throw error;
+    if (!data) return null;
+    const report = reportFromRow(data);
+    // Re-aggregate the affected (carrier, airline) so the trust model reflects it.
+    if (report.carrierId && report.airlineId) {
+      await this.recomputeVerification(report.carrierId, report.airlineId);
+    }
+    return report;
+  }
+  async getVerification(carrierId: string, airlineId: string): Promise<CarrierVerification | null> {
+    const sb = getSupabase();
+    if (!sb) return null;
+    const { data } = await sb
+      .from("carrier_airline_verifications")
+      .select("*")
+      .eq("carrier_id", carrierId)
+      .eq("airline_id", airlineId)
+      .maybeSingle();
+    return data ? verificationFromRow(data) : null;
+  }
+  async recomputeVerification(carrierId: string, airlineId: string): Promise<CarrierVerification | null> {
+    const sb = getServiceSupabase() ?? getSupabase();
+    if (!sb) return null;
+    const { data: reports } = await sb
+      .from("traveler_reports")
+      .select("outcome")
+      .eq("carrier_id", carrierId)
+      .eq("airline_id", airlineId)
+      .eq("moderation_status", "approved");
+    const tally = tallyReports((reports ?? []) as { outcome: TravelerReport["outcome"] }[]);
+
+    const { data: existing } = await sb
+      .from("carrier_airline_verifications")
+      .select("*")
+      .eq("carrier_id", carrierId)
+      .eq("airline_id", airlineId)
+      .maybeSingle();
+    const existingVer = existing ? verificationFromRow(existing) : null;
+    const teamControlled = isTeamControlled(existingVer?.verificationMethod);
+
+    const status = teamControlled && existingVer ? existingVer.status : deriveTravelerStatus(tally);
+    const row = {
+      carrier_id: carrierId,
+      airline_id: airlineId,
+      status,
+      verification_method: teamControlled && existingVer ? existingVer.verificationMethod : "traveler_reports",
+      explanation: teamControlled && existingVer ? existingVer.explanation : travelerExplanation(tally),
+      last_checked_at: new Date().toISOString(),
+      traveler_report_count: tally.total,
+      traveler_positive_count: tally.positive,
+      traveler_negative_count: tally.negative,
+      confidence_score: confidenceFromTally(tally),
+    };
+    const { data, error } = await sb
+      .from("carrier_airline_verifications")
+      .upsert(row, { onConflict: "carrier_id,airline_id" })
+      .select("*")
+      .maybeSingle();
+    if (error) throw error;
+    return data ? verificationFromRow(data) : null;
+  }
+}
+
+function reportFromRow(r: Record<string, unknown>): TravelerReport {
+  return {
+    id: String(r.id),
+    tripFollowupId: (r.trip_followup_id as string) ?? null,
+    email: (r.email as string) ?? null,
+    airlineId: (r.airline_id as string) ?? null,
+    carrierId: (r.carrier_id as string) ?? null,
+    travelDate: (r.travel_date as string) ?? null,
+    outcome: r.outcome as TravelerReport["outcome"],
+    stage: (r.stage as TravelerReport["stage"]) ?? null,
+    notes: (r.notes as string) ?? null,
+    photoUrl: (r.photo_url as string) ?? null,
+    evidenceLevel: (r.evidence_level as string) ?? null,
+    moderationStatus: r.moderation_status as ModerationStatus,
+    createdAt: (r.created_at as string) ?? null,
+    reviewedAt: (r.reviewed_at as string) ?? null,
+  };
+}
+
+function verificationFromRow(r: Record<string, unknown>): CarrierVerification {
+  return {
+    id: String(r.id),
+    carrierId: String(r.carrier_id),
+    airlineId: String(r.airline_id),
+    airlineRuleId: (r.airline_rule_id as string) ?? null,
+    status: r.status as CarrierVerification["status"],
+    verificationMethod: (r.verification_method as CarrierVerification["verificationMethod"]) ?? null,
+    explanation: (r.explanation as string) ?? null,
+    lastCheckedAt: (r.last_checked_at as string) ?? null,
+    travelerReportCount: Number(r.traveler_report_count ?? 0),
+    travelerPositiveCount: Number(r.traveler_positive_count ?? 0),
+    travelerNegativeCount: Number(r.traveler_negative_count ?? 0),
+    confidenceScore: r.confidence_score == null ? null : Number(r.confidence_score),
+  };
 }
 
 let cached: Repository | null = null;

@@ -1,4 +1,4 @@
-import type { Carrier, CarrierStatus } from "@/lib/data/types";
+import type { Carrier, CarrierStatus, CarrierVerification } from "@/lib/data/types";
 import { freshness } from "@/lib/freshness";
 
 export type StatusTone = "success" | "info" | "neutral" | "warn";
@@ -67,6 +67,27 @@ export function carrierEvidence(carrier: Carrier): string {
     }
     case "failed_check":
       return "Doesn’t match current rule data";
+    case "needs_review":
+      return "Awaiting manual review";
+    case "not_verified_yet":
+    default:
+      return "Awaiting review";
+  }
+}
+
+// Secondary evidence line for a per-(carrier, airline) verification record.
+export function verificationEvidence(v: CarrierVerification): string {
+  switch (v.status) {
+    case "team_verified": {
+      const f = freshness(v.lastCheckedAt);
+      return f.ageDays != null ? `Last checked ${f.ageDays} days ago` : "Checked by our team";
+    }
+    case "traveler_reported":
+      return v.travelerReportCount > 0
+        ? `${v.travelerReportCount} traveler report${v.travelerReportCount === 1 ? "" : "s"}`
+        : "Reports reviewed";
+    case "failed_check":
+      return v.explanation ?? "Doesn’t match current rule data";
     case "needs_review":
       return "Awaiting manual review";
     case "not_verified_yet":

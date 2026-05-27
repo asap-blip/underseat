@@ -6,6 +6,7 @@ import { ConfidenceBadge, ConfidenceReasons } from "./ConfidenceBadge";
 import { AlternativesPanel } from "./AlternativesPanel";
 import { ShareLink } from "./ShareLink";
 import { SourceCitation } from "./SourceCitation";
+import { CarrierStatus } from "./CarrierStatus";
 import { VerdictHelp } from "./Help";
 import { TripFollowupForm } from "./TripFollowupForm";
 import { verdictHeadline } from "@/lib/ui";
@@ -19,7 +20,7 @@ export function ResultView({
   shareToken?: string;
   showShare?: boolean;
 }) {
-  const { carrier, result, alternatives, warnings } = response;
+  const { carrier, result, alternatives, warnings, legStatuses } = response;
   const multiLeg = result.legs.length > 1;
   return (
     <div className="space-y-6">
@@ -102,9 +103,15 @@ export function ResultView({
                   )}
                 </div>
               </div>
-              <div className="flex flex-col items-end gap-1">
+              <div className="flex flex-col items-end gap-1.5">
                 <VerdictBadge verdict={leg.verdict} />
                 <ConfidenceBadge confidence={leg.confidence} />
+                {legStatuses[leg.legIndex] && (
+                  <CarrierStatus
+                    status={legStatuses[leg.legIndex].status}
+                    evidence={legStatuses[leg.legIndex].evidence}
+                  />
+                )}
               </div>
             </div>
 

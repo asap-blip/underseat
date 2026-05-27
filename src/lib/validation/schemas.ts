@@ -145,3 +145,10 @@ export const travelerResponseSchema = z.object({
 });
 
 export type TravelerResponseParsed = z.infer<typeof travelerResponseSchema>;
+
+// Admin moderation of a traveler report.
+export const moderationSchema = z.object({
+  moderationStatus: z.enum(["needs_review", "approved", "rejected", "spam"]),
+});
+
+export type ModerationParsed = z.infer<typeof moderationSchema>;

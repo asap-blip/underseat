@@ -1,4 +1,5 @@
-import type { Airline, Carrier, CheckInput } from "@/lib/data/types";
+import type { Airline, Carrier, CarrierStatus, CheckInput } from "@/lib/data/types";
+import { carrierEvidence, verificationEvidence } from "@/lib/carrierStatus";
 import {
   evaluateTrip,
   type LegContext,
@@ -27,12 +28,21 @@ export interface TripWarning {
   message: string;
 }
 
+// Per-leg carrier trust badge. Uses the per-(carrier, airline) verification
+// record when one exists, otherwise falls back to the catalog-level status.
+export interface LegCarrierStatus {
+  status: CarrierStatus;
+  evidence: string;
+  source: "verification" | "catalog";
+}
+
 export interface CheckResponse {
   input: CheckInput;
   carrier: Carrier;
   result: TripResult;
   alternatives: AlternativeSuggestion[];
   warnings: TripWarning[];
+  legStatuses: LegCarrierStatus[];
   meta: {
     dataSource: string;
     generatedAt: string;
@@ -199,6 +209,18 @@ export async function runCheck(
   const result = evaluateTrip(carrier, input.pet, contexts);
   const warnings = buildWarnings(contexts);
 
+  // Per-leg trust badge: prefer the per-(carrier, airline) verification record;
+  // fall back to the catalog-level carrier status when none exists.
+  const legStatuses: LegCarrierStatus[] = await Promise.all(
+    result.legs.map(async (leg) => {
+      const verification = await repo.getVerification(carrier.id, leg.airlineId);
+      if (verification) {
+        return { status: verification.status, evidence: verificationEvidence(verification), source: "verification" as const };
+      }
+      return { status: carrier.verification, evidence: carrierEvidence(carrier), source: "catalog" as const };
+    }),
+  );
+
   // Show alternatives whenever the trip is not a clean PASS, plus a small set
   // of roomier options on PASS (without distracting from the result).
   const alternatives =
@@ -228,6 +250,7 @@ export async function runCheck(
     result,
     alternatives,
     warnings,
+    legStatuses,
     meta: {
       dataSource: process.env.NEXT_PUBLIC_SUPABASE_URL ? "supabase" : "static-seed",
       generatedAt: new Date().toISOString(),

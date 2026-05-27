@@ -20,9 +20,14 @@ export default async function AdminPage() {
           <h1 className="text-2xl font-semibold text-slate-900">Admin · data</h1>
           <p className="mt-1 text-slate-600">Development view of seeded carriers, airline rules, and merchants.</p>
         </div>
-        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-          data source: {dataSourceLabel}
-        </span>
+        <div className="flex items-center gap-3">
+          <a href="/admin/reports" className="text-sm font-medium text-brand-700 hover:underline">
+            Traveler reports →
+          </a>
+          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+            data source: {dataSourceLabel}
+          </span>
+        </div>
       </div>
 
       <section className="rounded-2xl border border-slate-200 bg-white p-5">

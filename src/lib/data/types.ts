@@ -148,3 +148,44 @@ export interface ProductCode {
   code: string;
   carrierId: string;
 }
+
+export type ReportOutcome = "accepted" | "denied" | "unsure";
+export type ReportStage = "check_in" | "gate" | "boarding" | "onboard";
+export type ModerationStatus = "needs_review" | "approved" | "rejected" | "spam";
+export type VerificationMethod =
+  | "team_check"
+  | "automated_rule_match"
+  | "traveler_reports"
+  | "manual_review";
+
+export interface TravelerReport {
+  id: string;
+  tripFollowupId?: string | null;
+  email?: string | null;
+  airlineId?: string | null;
+  carrierId?: string | null;
+  travelDate?: string | null;
+  outcome: ReportOutcome;
+  stage?: ReportStage | null;
+  notes?: string | null;
+  photoUrl?: string | null;
+  evidenceLevel?: string | null;
+  moderationStatus: ModerationStatus;
+  createdAt?: string | null;
+  reviewedAt?: string | null;
+}
+
+export interface CarrierVerification {
+  id?: string;
+  carrierId: string;
+  airlineId: string;
+  airlineRuleId?: string | null;
+  status: CarrierStatus;
+  verificationMethod?: VerificationMethod | null;
+  explanation?: string | null;
+  lastCheckedAt?: string | null;
+  travelerReportCount: number;
+  travelerPositiveCount: number;
+  travelerNegativeCount: number;
+  confidenceScore?: number | null;
+}
