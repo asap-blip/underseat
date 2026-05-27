@@ -95,6 +95,15 @@ function matchesQuery(carrier: Carrier, q: string): boolean {
   return haystack.includes(q.toLowerCase());
 }
 
+// PostgREST .or()/ilike filter values are interpolated into a comma- and
+// parenthesis-delimited grammar where % and _ are wildcards. Strip every
+// character that could break out of a single `col.ilike.%value%` term so a
+// user-supplied search string can't inject extra filter conditions. Plain
+// alphanumerics, spaces and dashes (enough for brand/model/SKU search) survive.
+function sanitizeFilterValue(value: string): string {
+  return value.replace(/[%_,.()*:\\"']/g, "").trim();
+}
+
 function pickRule(
   airlineId: string,
   cabin: CabinType,
@@ -197,10 +206,10 @@ class StaticRepository implements Repository {
     console.info("[flypewpet] outbound_click (static):", record.carrierId, record.network);
   }
   async recordAirlineRequest(record: AirlineRequestRecord): Promise<void> {
-    console.info("[flypewpet] airline_request (static):", record.airline, record.cabin ?? "", record.email ?? "");
+    console.info("[flypewpet] airline_request (static):", record.airline, record.cabin ?? "");
   }
   async recordCarrierRequest(record: CarrierRequestRecord): Promise<void> {
-    console.info("[flypewpet] carrier_request (static):", record.carrier, record.email ?? "");
+    console.info("[flypewpet] carrier_request (static):", record.carrier);
   }
   // Traveler reports / verification aggregates live only in Supabase.
   async listTravelerReports(): Promise<TravelerReport[]> {
@@ -270,7 +279,10 @@ class SupabaseRepository implements Repository {
     const sb = getSupabase();
     if (!sb) return [];
     let q = sb.from("carriers").select("*").order("brand");
-    if (query) q = q.or(`brand.ilike.%${query}%,model.ilike.%${query}%,sku.ilike.%${query}%`);
+    if (query) {
+      const safe = sanitizeFilterValue(query);
+      if (safe) q = q.or(`brand.ilike.%${safe}%,model.ilike.%${safe}%,sku.ilike.%${safe}%`);
+    }
     const { data, error } = await q;
     if (error) throw error;
     return (data ?? []).map(carrierFromRow);
@@ -301,17 +313,18 @@ class SupabaseRepository implements Repository {
   async resolveCode(code: string): Promise<Carrier | null> {
     const sb = getSupabase();
     if (!sb) return null;
-    const normalized = code.trim().toUpperCase();
+    const safe = sanitizeFilterValue(code.trim().toUpperCase());
+    if (!safe) return null;
     const { data: codeRow } = await sb
       .from("product_codes")
       .select("carrier_id")
-      .ilike("code", normalized)
+      .ilike("code", safe)
       .maybeSingle();
     if (codeRow?.carrier_id) return this.getCarrier(String(codeRow.carrier_id));
     const { data } = await sb
       .from("carriers")
       .select("*")
-      .or(`sku.ilike.${normalized},id.ilike.${normalized}`)
+      .or(`sku.ilike.${safe},id.ilike.${safe}`)
       .maybeSingle();
     return data ? carrierFromRow(data) : null;
   }

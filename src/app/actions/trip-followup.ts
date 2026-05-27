@@ -55,7 +55,7 @@ export async function submitTripFollowup(input: unknown): Promise<TripFollowupRe
   const sb = getServiceSupabase();
   if (!sb) {
     // No DB configured (local/static): accept the opt-in without persisting.
-    console.info("[flypewpet] trip_followup (no Supabase configured):", row.email, row.followup_send_at);
+    console.info("[flypewpet] trip_followup (no Supabase configured); not persisted, send_at:", row.followup_send_at);
     return { ok: true, persisted: false };
   }
 
