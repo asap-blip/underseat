@@ -131,3 +131,17 @@ export const tripFollowupSchema = z.object({
 });
 
 export type TripFollowupParsed = z.infer<typeof tripFollowupSchema>;
+
+// Traveler response to a follow-up email. Friendly outcome tokens map to the
+// traveler_reports.outcome CHECK values (accepted/denied/unsure) at write time.
+export const travelerOutcomeSchema = z.enum(["worked", "did_not_work", "mixed"]);
+export const travelerStageSchema = z.enum(["check_in", "gate", "boarding", "onboard"]);
+
+export const travelerResponseSchema = z.object({
+  followupId: z.string().uuid(),
+  outcome: travelerOutcomeSchema,
+  stage: travelerStageSchema.optional().nullable(),
+  notes: z.string().max(500).optional().nullable(),
+});
+
+export type TravelerResponseParsed = z.infer<typeof travelerResponseSchema>;
