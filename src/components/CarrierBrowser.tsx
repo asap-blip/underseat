@@ -72,7 +72,7 @@ export function CarrierBrowser({ carriers }: { carriers: Carrier[] }) {
                   <div className="text-sm font-medium text-slate-500">{c.brand}</div>
                   <div className="font-semibold text-slate-900">{c.model}</div>
                 </div>
-                <CarrierStatus status={c.verification} evidence={carrierEvidence(c)} />
+                <CarrierStatus status={c.verification} evidence={carrierEvidence(c)} carrier={c} />
               </div>
               <dl className="mt-3 space-y-1 text-xs text-slate-500">
                 <div>{c.lengthCm} × {c.widthCm} × {c.heightCm} cm · {c.softSided ? "soft-sided" : "hard-sided"}</div>
