@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CheckWidget } from "@/components/CheckWidget";
+import { CopySnippetButton } from "@/components/CopySnippetButton";
 import { getRepository } from "@/lib/data/repository";
 import { buildCoverageMap } from "@/lib/coverage";
 
@@ -211,15 +212,7 @@ export default async function ForMerchantsPage() {
             <code>{embedSnippet}</code>
           </pre>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            navigator.clipboard.writeText(embedSnippet).catch(() => {});
-          }}
-          className="mt-3 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-        >
-          Copy snippet
-        </button>
+        <CopySnippetButton snippet={embedSnippet} />
       </section>
 
       {/* FAQ */}
