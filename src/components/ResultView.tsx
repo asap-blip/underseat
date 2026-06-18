@@ -9,6 +9,7 @@ import { SourceCitation } from "./SourceCitation";
 import { CarrierStatus } from "./CarrierStatus";
 import { VerdictHelp } from "./Help";
 import { TripFollowupForm } from "./TripFollowupForm";
+import { SaveCheckForm } from "./SaveCheckForm";
 import { verdictHeadline } from "@/lib/ui";
 
 export function ResultView({
@@ -157,6 +158,14 @@ export function ResultView({
         alternatives={alternatives}
         checkToken={shareToken}
         heading={result.overall === "PASS" ? "Other carriers that also fit" : "Better-fit alternatives"}
+      />
+
+      <SaveCheckForm
+        shareToken={shareToken}
+        carrierId={carrier.id}
+        airlineId={result.legs[0]?.bookingAirlineId}
+        overallStatus={result.overall}
+        routeText={result.legs.map((l) => `${l.origin}→${l.destination}`).join(", ")}
       />
 
       <TripFollowupForm

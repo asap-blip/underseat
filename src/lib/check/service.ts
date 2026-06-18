@@ -8,6 +8,31 @@ import {
 } from "@/lib/rules/engine";
 import { getRepository } from "@/lib/data/repository";
 
+// Synthetic carrier for custom-dimension checks. Used when a user enters
+// raw dimensions instead of selecting from the catalog.
+function buildCustomCarrier(input: CheckInput): Carrier {
+  const d = input.carrierDimensions!;
+  return {
+    id: "__custom__",
+    brand: "Your carrier",
+    model: `${d.lengthCm}×${d.widthCm}×${d.heightCm} cm`,
+    sku: "CUSTOM",
+    softSided: d.softSided,
+    lengthCm: d.lengthCm,
+    widthCm: d.widthCm,
+    heightCm: d.heightCm,
+    weightKg: 0,
+    verification: "not_verified_yet",
+    verifiedAt: null,
+    travelerReports: null,
+    imageUrl: null,
+    affiliateUrl: null,
+    affiliateTargets: {},
+    priceUsd: null,
+    description: "Custom dimensions entered by user.",
+  };
+}
+
 const VERDICT_RANK: Record<Verdict, number> = { NO: 0, BORDERLINE: 1, PASS: 2 };
 
 export interface AlternativeSuggestion {
@@ -200,24 +225,33 @@ export async function runCheck(
   opts: { persist?: boolean } = {},
 ): Promise<CheckResponse> {
   const repo = getRepository();
-  const carrier = await repo.getCarrier(input.carrierId);
-  if (!carrier) {
-    throw new Error(`Unknown carrier: ${input.carrierId}`);
+  const carrier = input.carrierId
+    ? await repo.getCarrier(input.carrierId)
+    : null;
+  if (!carrier && !input.carrierDimensions) {
+    throw new Error("Provide a carrierId or carrierDimensions.");
   }
+  const resolved = carrier ?? buildCustomCarrier(input);
 
   const contexts = await buildLegContexts(input);
-  const result = evaluateTrip(carrier, input.pet, contexts);
+  const result = evaluateTrip(resolved, input.pet, contexts);
   const warnings = buildWarnings(contexts);
 
   // Per-leg trust badge: prefer the per-(carrier, airline) verification record;
   // fall back to the catalog-level carrier status when none exists.
+  // For custom carriers there is no verification record, so always use catalog.
   const legStatuses: LegCarrierStatus[] = await Promise.all(
     result.legs.map(async (leg) => {
-      const verification = await repo.getVerification(carrier.id, leg.airlineId);
+      if (resolved.id === "__custom__") {
+        return { status: "not_verified_yet" as const, evidence: "Awaiting review", source: "catalog" as const };
+      }
+      const verification = input.carrierId
+        ? await repo.getVerification(input.carrierId, leg.airlineId)
+        : null;
       if (verification) {
         return { status: verification.status, evidence: verificationEvidence(verification), source: "verification" as const };
       }
-      return { status: carrier.verification, evidence: carrierEvidence(carrier), source: "catalog" as const };
+      return { status: resolved.verification, evidence: carrierEvidence(resolved), source: "catalog" as const };
     }),
   );
 
@@ -225,14 +259,14 @@ export async function runCheck(
   // of roomier options on PASS (without distracting from the result).
   const alternatives =
     result.overall === "PASS"
-      ? (await computeAlternatives(carrier, input, contexts)).slice(0, 2)
-      : await computeAlternatives(carrier, input, contexts);
+      ? (await computeAlternatives(resolved, input, contexts)).slice(0, 2)
+      : await computeAlternatives(resolved, input, contexts);
 
   let checkId: string | undefined;
   if (opts.persist) {
     try {
       checkId = await repo.recordCheck({
-        carrierId: carrier.id,
+        carrierId: resolved.id,
         petSpecies: input.pet.species,
         petWeightKg: input.pet.weightKg,
         overall: result.overall,
@@ -246,7 +280,7 @@ export async function runCheck(
 
   return {
     input,
-    carrier,
+    carrier: resolved,
     result,
     alternatives,
     warnings,

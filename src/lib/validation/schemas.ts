@@ -30,9 +30,20 @@ export const tripLegSchema = z.object({
 });
 
 export const checkInputSchema = z.object({
-  carrierId: z.string().min(1),
+  carrierId: z.string().min(1).optional(),
+  carrierDimensions: z
+    .object({
+      lengthCm: z.number().positive().max(200),
+      widthCm: z.number().positive().max(200),
+      heightCm: z.number().positive().max(200),
+      softSided: z.boolean().default(true),
+    })
+    .optional(),
   pet: petSchema,
   legs: z.array(tripLegSchema).min(1).max(8),
+}).refine((d) => Boolean(d.carrierId) !== Boolean(d.carrierDimensions), {
+  message: "Provide either carrierId or carrierDimensions, not both or neither.",
+  path: ["carrierId"],
 });
 
 export type CheckInputParsed = z.infer<typeof checkInputSchema>;

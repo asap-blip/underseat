@@ -65,6 +65,12 @@ export function CheckForm({
   const [error, setError] = useState<string | null>(null);
   const [code, setCode] = useState("");
   const [codeMsg, setCodeMsg] = useState<string | null>(null);
+  const [customMode, setCustomMode] = useState(false);
+  const [customL, setCustomL] = useState("");
+  const [customW, setCustomW] = useState("");
+  const [customH, setCustomH] = useState("");
+  const [customSoft, setCustomSoft] = useState(true);
+  const [customName, setCustomName] = useState("");
 
   const { register, control, handleSubmit, setValue, watch } = useForm<FormValues>({
     defaultValues: {
@@ -118,29 +124,71 @@ export function CheckForm({
   async function onSubmit(values: FormValues) {
     setSubmitting(true);
     setError(null);
-    const payload = {
-      carrierId: values.carrierId,
-      pet: {
-        name: values.petName || null,
-        species: values.species,
-        weightKg: Number(values.weightKg),
-        lengthCm: values.petLengthCm ? Number(values.petLengthCm) : null,
-        heightCm: values.petHeightCm ? Number(values.petHeightCm) : null,
-      },
-      legs: values.legs.map((l) => {
-        const unknownOperating = l.operatingCarrierId === UNKNOWN_OPERATING;
-        return {
-          airlineId: l.airlineId,
-          origin: l.origin.trim().toUpperCase(),
-          destination: l.destination.trim().toUpperCase(),
-          cabin: l.cabin,
-          flightNumber: l.flightNumber || null,
-          marketedCarrierId: l.marketedCarrierId || null,
-          operatingCarrierId: unknownOperating ? null : l.operatingCarrierId || null,
-          operatingCarrierUnknown: unknownOperating,
+
+    // Validate custom dimensions
+    if (customMode) {
+      const l = Number(customL);
+      const w = Number(customW);
+      const h = Number(customH);
+      if (!l || !w || !h || l <= 0 || w <= 0 || h <= 0) {
+        setError("Please enter valid dimensions in cm.");
+        setSubmitting(false);
+        return;
+      }
+    }
+
+    const payload = customMode
+      ? {
+          carrierDimensions: {
+            lengthCm: Number(customL),
+            widthCm: Number(customW),
+            heightCm: Number(customH),
+            softSided: customSoft,
+          },
+          pet: {
+            name: values.petName || null,
+            species: values.species,
+            weightKg: Number(values.weightKg),
+            lengthCm: values.petLengthCm ? Number(values.petLengthCm) : null,
+            heightCm: values.petHeightCm ? Number(values.petHeightCm) : null,
+          },
+          legs: values.legs.map((l) => {
+            const unknownOperating = l.operatingCarrierId === UNKNOWN_OPERATING;
+            return {
+              airlineId: l.airlineId,
+              origin: l.origin.trim().toUpperCase(),
+              destination: l.destination.trim().toUpperCase(),
+              cabin: l.cabin,
+              flightNumber: l.flightNumber || null,
+              marketedCarrierId: l.marketedCarrierId || null,
+              operatingCarrierId: unknownOperating ? null : l.operatingCarrierId || null,
+              operatingCarrierUnknown: unknownOperating,
+            };
+          }),
+        }
+      : {
+          carrierId: values.carrierId,
+          pet: {
+            name: values.petName || null,
+            species: values.species,
+            weightKg: Number(values.weightKg),
+            lengthCm: values.petLengthCm ? Number(values.petLengthCm) : null,
+            heightCm: values.petHeightCm ? Number(values.petHeightCm) : null,
+          },
+          legs: values.legs.map((l) => {
+            const unknownOperating = l.operatingCarrierId === UNKNOWN_OPERATING;
+            return {
+              airlineId: l.airlineId,
+              origin: l.origin.trim().toUpperCase(),
+              destination: l.destination.trim().toUpperCase(),
+              cabin: l.cabin,
+              flightNumber: l.flightNumber || null,
+              marketedCarrierId: l.marketedCarrierId || null,
+              operatingCarrierId: unknownOperating ? null : l.operatingCarrierId || null,
+              operatingCarrierUnknown: unknownOperating,
+            };
+          }),
         };
-      }),
-    };
     try {
       const res = await fetch("/api/check", {
         method: "POST",
@@ -165,38 +213,127 @@ export function CheckForm({
       {/* Carrier */}
       <section className="rounded-2xl border border-slate-200 bg-white p-5">
         <h2 className="text-lg font-semibold text-slate-900">1. Your carrier</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className={label}>Select a carrier</label>
-            <select className={input} {...register("carrierId")}>
-              {carriers.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.brand} {c.model} · {c.lengthCm}×{c.widthCm}×{c.heightCm} cm
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className={label}>Or scan / enter a product code</label>
-            <div className="flex gap-2">
+
+        {/* Toggle between catalog and manual */}
+        <div className="mt-3 flex gap-2">
+          <button
+            type="button"
+            onClick={() => setCustomMode(false)}
+            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+              !customMode
+                ? "bg-brand-600 text-white"
+                : "border border-slate-300 text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            Select from catalog
+          </button>
+          <button
+            type="button"
+            onClick={() => setCustomMode(true)}
+            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+              customMode
+                ? "bg-brand-600 text-white"
+                : "border border-slate-300 text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            Enter dimensions manually
+          </button>
+        </div>
+
+        {customMode ? (
+          <div className="mt-4 space-y-4">
+            <div>
+              <label className={label}>Carrier name <span className="font-normal text-slate-400">optional</span></label>
               <input
                 className={input}
-                placeholder="e.g. FPP-SHP-OD-M"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
+                placeholder="e.g. Sherpa Original Medium"
+                value={customName}
+                onChange={(e) => setCustomName(e.target.value)}
               />
-              <button
-                type="button"
-                onClick={lookupCode}
-                className="shrink-0 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-50"
-              >
-                Load
-              </button>
             </div>
-            {codeMsg && <p className="mt-1 text-xs text-slate-500">{codeMsg}</p>}
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <label className={label}>Length (cm)</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="200"
+                  placeholder="45"
+                  value={customL}
+                  onChange={(e) => setCustomL(e.target.value)}
+                  className={input}
+                />
+              </div>
+              <div>
+                <label className={label}>Width (cm)</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="200"
+                  placeholder="30"
+                  value={customW}
+                  onChange={(e) => setCustomW(e.target.value)}
+                  className={input}
+                />
+              </div>
+              <div>
+                <label className={label}>Height (cm)</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="200"
+                  placeholder="25"
+                  value={customH}
+                  onChange={(e) => setCustomH(e.target.value)}
+                  className={input}
+                />
+              </div>
+            </div>
+            <label className="flex items-center gap-2 text-sm text-slate-600">
+              <input
+                type="checkbox"
+                checked={customSoft}
+                onChange={(e) => setCustomSoft(e.target.checked)}
+                className="rounded border-slate-300"
+              />
+              Soft-sided carrier (compresses under the seat)
+            </label>
+            <CarrierMeasureHelp />
           </div>
-        </div>
-        {selectedCarrierId && (
+        ) : (
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className={label}>Select a carrier</label>
+              <select className={input} {...register("carrierId")}>
+                {carriers.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.brand} {c.model} · {c.lengthCm}×{c.widthCm}×{c.heightCm} cm
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={label}>Or scan / enter a product code</label>
+              <div className="flex gap-2">
+                <input
+                  className={input}
+                  placeholder="e.g. FPP-SHP-OD-M"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={lookupCode}
+                  className="shrink-0 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-50"
+                >
+                  Load
+                </button>
+              </div>
+              {codeMsg && <p className="mt-1 text-xs text-slate-500">{codeMsg}</p>}
+            </div>
+          </div>
+        )}
+        {selectedCarrierId && !customMode && (
           <p className="mt-2 text-xs text-slate-400">
             Selected:{" "}
             {(() => {
@@ -205,7 +342,11 @@ export function CheckForm({
             })()}
           </p>
         )}
-        <CarrierMeasureHelp />
+        {customMode && (
+          <p className="mt-2 text-xs text-slate-400">
+            Enter your carrier&apos;s external dimensions. We&apos;ll check them against the airline&apos;s rules.
+          </p>
+        )}
       </section>
 
       {/* Pet */}

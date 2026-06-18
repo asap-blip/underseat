@@ -27,7 +27,7 @@ export default function RootLayout({
               <Link href="/carriers" className="hover:text-slate-900">Catalog</Link>
               <Link href="/rules" className="hover:text-slate-900">Rules &amp; sources</Link>
               <Link href="/check" className="hover:text-slate-900">Check a trip</Link>
-              <Link href="/merchant/petgearco" className="hover:text-slate-900">For merchants</Link>
+              <Link href="/for-merchants" className="hover:text-slate-900">For merchants</Link>
               <Link
                 href="/check"
                 className="rounded-lg bg-brand-600 px-3 py-1.5 font-medium text-white hover:bg-brand-700"

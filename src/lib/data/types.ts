@@ -123,7 +123,13 @@ export interface TripLegInput {
 }
 
 export interface CheckInput {
-  carrierId: string;
+  carrierId?: string;
+  carrierDimensions?: {
+    lengthCm: number;
+    widthCm: number;
+    heightCm: number;
+    softSided: boolean;
+  };
   pet: Pet;
   legs: TripLegInput[];
 }

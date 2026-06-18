@@ -11,7 +11,23 @@ export function AlternativesPanel({
   checkToken?: string;
   heading: string;
 }) {
-  if (alternatives.length === 0) return null;
+  if (alternatives.length === 0) {
+    return (
+      <section className="rounded-2xl border border-slate-200 bg-white p-5">
+        <h2 className="text-lg font-semibold text-slate-900">We don&apos;t have a guaranteed fit in our catalog yet</h2>
+        <p className="mt-2 text-sm text-slate-600">
+          No carriers in our curated catalog clear every leg of your itinerary. That doesn&apos;t mean one doesn&apos;t exist — we just haven&apos;t verified it yet.
+        </p>
+        <Link
+          href="/carriers"
+          className="mt-3 inline-block rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+        >
+          Suggest a carrier →
+        </Link>
+      </section>
+    );
+  }
+
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-5">
       <h2 className="text-lg font-semibold text-slate-900">{heading}</h2>
@@ -43,7 +59,7 @@ export function AlternativesPanel({
                   target="_blank"
                   className="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700"
                 >
-                  Shop this carrier
+                  Buy this carrier
                 </Link>
                 <span className="text-[10px] text-slate-400">Affiliate link</span>
               </div>
