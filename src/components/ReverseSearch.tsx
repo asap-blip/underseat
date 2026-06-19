@@ -26,7 +26,10 @@ export function ReverseSearch({ carriers }: { carriers: Carrier[] }) {
   function search(e: React.FormEvent) {
     e.preventDefault();
     const w = Number(weightKg);
-    if (!Number.isFinite(w) || w <= 0) return;
+    if (!Number.isFinite(w) || w <= 0) {
+      setResults(null);
+      return;
+    }
     const recs = recommendCarriers(
       {
         weightKg: w,

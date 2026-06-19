@@ -21,6 +21,7 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
     const h = Number(heightCm);
     if (!l || !w || !h || l <= 0 || w <= 0 || h <= 0) {
       setError("Please enter valid dimensions in cm.");
+      setSubmitting(false);
       return;
     }
     if (!airlineId) {

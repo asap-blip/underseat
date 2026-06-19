@@ -1,16 +1,25 @@
 "use client";
 
+import { useState } from "react";
+
 export function MerchantSignupForm() {
+  const [submitted, setSubmitted] = useState(false);
+
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-6">
       <h2 className="text-xl font-semibold text-slate-900">Get started</h2>
       <p className="mt-1 text-sm text-slate-600">
         Sign up and get your embed code in under 5 minutes. No credit card required for Starter.
       </p>
+      {submitted ? (
+        <p className="mt-6 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+          Thanks! We&apos;ll be in touch soon. For now, use the embed snippet below.
+        </p>
+      ) : (
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          alert("Thanks! We'll be in touch soon. For now, use the embed snippet below.");
+          setSubmitted(true);
         }}
         className="mt-6 grid gap-4 sm:grid-cols-2"
       >
@@ -53,12 +62,14 @@ export function MerchantSignupForm() {
         <div className="sm:col-span-2">
           <button
             type="submit"
-            className="rounded-lg bg-brand-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-brand-700"
+            disabled={submitted}
+            className="rounded-lg bg-brand-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-60"
           >
             Create my account
           </button>
         </div>
       </form>
+      )}
     </section>
   );
 }
