@@ -19,8 +19,8 @@ export const petSchema = z.object({
 
 export const tripLegSchema = z.object({
   airlineId: z.string().min(1),
-  origin: z.string().min(2).max(6).optional().nullable(),
-  destination: z.string().min(2).max(6).optional().nullable(),
+  origin: z.string().max(6).optional().nullable().transform((v) => (v === "" ? null : v ?? null)),
+  destination: z.string().max(6).optional().nullable().transform((v) => (v === "" ? null : v ?? null)),
   cabin: cabinSchema,
   flightNumber: z.string().max(10).optional().nullable(),
   aircraftType: z.string().max(40).optional().nullable(),

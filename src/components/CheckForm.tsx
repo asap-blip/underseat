@@ -15,8 +15,8 @@ import { CarrierMeasureHelp, FlightInfoHelp, PetMeasureHelp } from "./Help";
 
 interface LegField {
   airlineId: string;
-  origin: string;
-  destination: string;
+  origin?: string | null;
+  destination?: string | null;
   cabin: CabinType;
   flightNumber?: string;
   marketedCarrierId?: string;
@@ -156,8 +156,8 @@ export function CheckForm({
             const unknownOperating = l.operatingCarrierId === UNKNOWN_OPERATING;
             return {
               airlineId: l.airlineId,
-              origin: l.origin.trim().toUpperCase(),
-              destination: l.destination.trim().toUpperCase(),
+              origin: l.origin?.trim().toUpperCase() ?? null,
+              destination: l.destination?.trim().toUpperCase() ?? null,
               cabin: l.cabin,
               flightNumber: l.flightNumber || null,
               marketedCarrierId: l.marketedCarrierId || null,
@@ -179,8 +179,8 @@ export function CheckForm({
             const unknownOperating = l.operatingCarrierId === UNKNOWN_OPERATING;
             return {
               airlineId: l.airlineId,
-              origin: l.origin.trim().toUpperCase(),
-              destination: l.destination.trim().toUpperCase(),
+              origin: l.origin?.trim().toUpperCase() ?? null,
+              destination: l.destination?.trim().toUpperCase() ?? null,
               cabin: l.cabin,
               flightNumber: l.flightNumber || null,
               marketedCarrierId: l.marketedCarrierId || null,
