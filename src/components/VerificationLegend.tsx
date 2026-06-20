@@ -1,7 +1,7 @@
 import { HelpPanel } from "./Help";
 import { CARRIER_STATUS, PRIMARY_STATUSES, STATUS_TONE_CLASS } from "@/lib/carrierStatus";
 
-// Lightweight, collapsed-by-default explainer shown above the catalog grid.
+// Lightweight, collapsed-by-default explainer shown above the carrier grid.
 export function VerificationLegend() {
   return (
     <HelpPanel title="How verification works">

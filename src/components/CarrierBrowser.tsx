@@ -53,9 +53,9 @@ export function CarrierBrowser({ carriers }: { carriers: Carrier[] }) {
           <button
             type="button"
             onClick={lookup}
-            className="shrink-0 rounded-full border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            className="secondary-cta shrink-0 px-3 py-2 text-sm"
           >
-            Load
+            Load carrier
           </button>
         </div>
       </div>
@@ -92,7 +92,7 @@ export function CarrierBrowser({ carriers }: { carriers: Carrier[] }) {
                   className="text-sm font-medium text-slate-600 hover:text-slate-900"
                   title="Affiliate link — we may earn a commission"
                 >
-                  Shop <span className="text-[10px] text-slate-400">(affiliate)</span> →
+                  Shop carrier <span className="text-[10px] text-slate-400">(affiliate)</span> →
                 </Link>
               </div>
             </div>

@@ -1,17 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-50: #f3fbf8;
-  --color-brand-100: #dff1ea;
-  --color-brand-200: #c7e6dc;
-  --color-brand-500: #4f9a8b;
-  --color-brand-600: #3f8478;
-  --color-brand-700: #2f6960;
-  --color-blush-50: #fff3ee;
-  --color-blush-100: #ffe3d8;
-  --color-blush-500: #e78f78;
-  --color-cream: #fbf7ef;
-  --color-charcoal: #26332f;
+  --color-brand-50: #fff8e8;
+  --color-brand-100: #f4dfb6;
+  --color-brand-200: #e6bf73;
+  --color-brand-500: #c9902b;
+  --color-brand-600: #a86d18;
+  --color-brand-700: #7a4d14;
+  --color-blush-50: #fff0d8;
+  --color-blush-100: #ffe0b8;
+  --color-blush-500: #d98a2b;
+  --color-cream: #fffaf1;
+  --color-navy: #10233f;
+  --color-sand: #f2e6d2;
+  --color-biscuit: #fff1d8;
+  --color-honey: #d69a2c;
+  --color-caramel: #a86f1d;
+  --color-charcoal: #172033;
 }
 
 :root {
@@ -21,30 +26,45 @@
 html,
 body {
   background:
-    radial-gradient(circle at top left, rgba(223, 241, 234, 0.85), transparent 34rem),
-    radial-gradient(circle at 88% 12%, rgba(255, 227, 216, 0.72), transparent 28rem),
-    var(--color-cream);
+    radial-gradient(circle at 8% -8%, rgba(214, 154, 44, 0.18), transparent 24rem),
+    radial-gradient(circle at 92% 8%, rgba(217, 238, 247, 0.55), transparent 26rem),
+    linear-gradient(180deg, #fffaf1 0%, #f8efd9 100%);
   color: var(--color-charcoal);
 }
 
 body {
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
 }
 
 .soft-panel {
-  border: 1px solid rgba(38, 51, 47, 0.1);
+  border: 1px solid rgba(16, 35, 63, 0.08);
   border-radius: 1.75rem;
-  background: rgba(255, 255, 255, 0.88);
-  box-shadow: 0 24px 70px rgba(47, 105, 96, 0.08);
+  background: rgba(255, 250, 241, 0.86);
+  box-shadow: 0 24px 70px rgba(16, 35, 63, 0.08);
   backdrop-filter: blur(14px);
 }
 
 .soft-panel-muted {
-  border: 1px solid rgba(79, 154, 139, 0.16);
+  border: 1px solid rgba(214, 154, 44, 0.18);
   border-radius: 1.75rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(243, 251, 248, 0.9));
-  box-shadow: 0 24px 70px rgba(47, 105, 96, 0.08);
+  background: linear-gradient(135deg, rgba(255, 250, 241, 0.94), rgba(255, 240, 214, 0.86));
+  box-shadow: 0 24px 70px rgba(16, 35, 63, 0.08);
+  backdrop-filter: blur(14px);
+}
+
+.flight-check-form {
+  border: 1px solid rgba(16, 35, 63, 0.12);
+  border-radius: 1.35rem;
+  background: rgba(255, 250, 241, 0.96);
+  padding: 0.95rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82), 0 18px 42px rgba(16, 35, 63, 0.08);
+}
+
+.flight-check-form:focus-within {
+  border-color: rgba(214, 154, 44, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 0 4px rgba(214, 154, 44, 0.16);
 }
 
 .section-eyebrow {
@@ -52,11 +72,11 @@ body {
   align-items: center;
   gap: 0.45rem;
   border-radius: 999px;
-  background: rgba(223, 241, 234, 0.8);
-  padding: 0.35rem 0.7rem;
-  color: #2f6960;
+  background: rgba(244, 223, 182, 0.88);
+  padding: 0.35rem 0.72rem;
+  color: var(--color-caramel);
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.02em;
 }
 
@@ -65,37 +85,38 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  background: #2f6960;
+  background: var(--color-navy);
   padding: 0.75rem 1.1rem;
   color: white;
   font-size: 0.9rem;
-  font-weight: 750;
-  box-shadow: 0 12px 24px rgba(47, 105, 96, 0.2);
+  font-weight: 800;
+  box-shadow: 0 12px 24px rgba(16, 35, 63, 0.18);
   transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
 }
 
 .primary-cta:hover {
-  background: #25564f;
+  background: #0b1830;
   transform: translateY(-1px);
-  box-shadow: 0 16px 30px rgba(47, 105, 96, 0.24);
+  box-shadow: 0 16px 30px rgba(16, 35, 63, 0.24);
 }
 
 .secondary-cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(47, 105, 96, 0.22);
+  border: 1px solid rgba(214, 154, 44, 0.42);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 250, 241, 0.9);
   padding: 0.75rem 1.1rem;
-  color: #2f6960;
+  color: var(--color-caramel);
   font-size: 0.9rem;
-  font-weight: 750;
-  transition: background 160ms ease, transform 160ms ease;
+  font-weight: 800;
+  transition: background 160ms ease, transform 160ms ease, border-color 160ms ease;
 }
 
 .secondary-cta:hover {
   background: white;
+  border-color: rgba(168, 111, 29, 0.62);
   transform: translateY(-1px);
 }
 
@@ -104,23 +125,24 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  color: #2f6960;
+  color: var(--color-navy);
   font-size: 0.9rem;
-  font-weight: 750;
-  transition: background 160ms ease;
+  font-weight: 800;
+  transition: background 160ms ease, color 160ms ease;
 }
 
 .ghost-cta:hover {
-  background: rgba(223, 241, 234, 0.75);
+  background: rgba(244, 223, 182, 0.65);
+  color: var(--color-caramel);
 }
 
 .soft-input {
   width: 100%;
-  border: 1px solid rgba(38, 51, 47, 0.14);
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(168, 111, 29, 0.22);
+  border-radius: 0.95rem;
+  background: rgba(255, 250, 241, 0.96);
   padding: 0.72rem 0.85rem;
-  color: #26332f;
+  color: var(--color-navy);
   font-size: 0.875rem;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
   outline: none;
@@ -128,31 +150,32 @@ body {
 }
 
 .soft-input::placeholder {
-  color: rgba(38, 51, 47, 0.42);
+  color: rgba(23, 32, 51, 0.42);
 }
 
 .soft-input:focus {
-  border-color: rgba(79, 154, 139, 0.8);
+  border-color: rgba(214, 154, 44, 0.72);
   background: white;
-  box-shadow: 0 0 0 4px rgba(223, 241, 234, 0.9);
+  box-shadow: 0 0 0 4px rgba(214, 154, 44, 0.16);
 }
 
 .soft-label {
   display: block;
   margin-bottom: 0.35rem;
-  color: rgba(38, 51, 47, 0.72);
+  color: rgba(16, 35, 63, 0.72);
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .muted-copy {
-  color: rgba(38, 51, 47, 0.68);
+  color: rgba(23, 32, 51, 0.68);
 }
 
 .paw-mark {
   display: inline-grid;
   place-items: center;
   border-radius: 999px;
-  background: linear-gradient(135deg, #2f6960, #4f9a8b);
+  background: linear-gradient(135deg, var(--color-honey), var(--color-caramel));
   color: white;
+  box-shadow: 0 10px 20px rgba(168, 111, 29, 0.18);
 }

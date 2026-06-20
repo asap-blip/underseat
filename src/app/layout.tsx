@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
+import { Manrope } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-manrope",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "flypewpet — Pet carrier flight compatibility",
@@ -14,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen flex flex-col">
+    <html lang="en" className={manrope.variable}>
+      <body className="min-h-screen flex flex-col font-sans">
         <header className="sticky top-0 z-50 border-b border-stone-200/70 bg-white/80 backdrop-blur">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
             <Link href="/" className="flex items-center gap-2 font-semibold text-slate-900">
@@ -23,19 +30,15 @@ export default function RootLayout({
               <span>flypewpet</span>
             </Link>
             <nav className="hidden items-center gap-5 text-sm text-slate-600 md:flex">
-              <Link href="/find" className="hover:text-slate-900">Find a carrier</Link>
-              <Link href="/carriers" className="hover:text-slate-900">Catalog</Link>
-              <Link href="/rules" className="hover:text-slate-900">Rules &amp; sources</Link>
-              <Link href="/for-merchants" className="hover:text-slate-900">For merchants</Link>
-              <Link href="/check" className="ghost-cta">
-                Check a trip
-              </Link>
+              <Link href="/find" className="hover:text-navy">Find a pet carrier</Link>
+              <Link href="/carriers" className="hover:text-navy">Shop carriers</Link>
+              <Link href="/rules" className="hover:text-navy">Airline pet rules</Link>
               <Link href="/check" className="primary-cta px-4 py-2 text-sm">
-                Start check
+                Check my trip
               </Link>
             </nav>
             <Link href="/check" className="primary-cta px-4 py-2 text-sm md:hidden">
-              Check
+              Check my trip
             </Link>
           </div>
         </header>

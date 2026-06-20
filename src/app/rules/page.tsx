@@ -39,7 +39,7 @@ export default async function RulesPage() {
     <div className="space-y-6">
       <div>
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-2xl font-semibold text-slate-900">Airline rules &amp; sources</h1>
+          <h1 className="text-2xl font-semibold text-slate-900">Airline pet rules</h1>
           {lastUpdated && (
             <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
               Rules last updated {lastUpdated}

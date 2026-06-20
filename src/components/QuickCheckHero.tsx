@@ -71,14 +71,14 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="soft-panel p-4 sm:p-5">
+    <form onSubmit={handleSubmit} className="flight-check-form">
       {/* Header */}
       <div className="mb-4 flex items-center gap-2">
         <span className="section-eyebrow">
           <span aria-hidden="true">✈</span>
-          Quick check
+          Trip check
         </span>
-        <span className="text-xs text-slate-400">Result in about 60 seconds.</span>
+        <span className="text-xs text-slate-500">For one flight leg.</span>
       </div>
 
       {/* Inputs: airline + cabin + L + W + H — stacks on 375px, row on sm+ */}
@@ -110,7 +110,7 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
         </div>
 
         <div>
-          <label className="soft-label">L (cm)</label>
+          <label className="soft-label">Length (cm)</label>
           <input
             type="number"
             min="1"
@@ -122,7 +122,7 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
           />
         </div>
         <div>
-          <label className="soft-label">W (cm)</label>
+          <label className="soft-label">Width (cm)</label>
           <input
             type="number"
             min="1"
@@ -134,7 +134,7 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
           />
         </div>
         <div>
-          <label className="soft-label">H (cm)</label>
+          <label className="soft-label">Height (cm)</label>
           <input
             type="number"
             min="1"
@@ -169,14 +169,14 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
           disabled={submitting}
           className="primary-cta w-full px-6 py-2.5 text-sm disabled:opacity-60 sm:w-auto sm:px-8"
         >
-          {submitting ? "Checking…" : "Check now"}
+          {submitting ? "Checking…" : "Check my trip"}
         </button>
       </div>
 
       {/* Hint */}
-      <p className="mt-2 text-xs text-slate-400">
+      <p className="mt-2 text-xs text-slate-500">
         Carrier assumed soft-sided. For hard-sided or multi-leg trips, use the{" "}
-        <a href="/check" className="font-medium text-brand-700 underline">full check</a>.
+        <a href="/check" className="font-medium text-brand-700 underline">full trip check</a>.
       </p>
 
       {error && (

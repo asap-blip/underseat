@@ -213,7 +213,7 @@ export function CheckForm({
       <section className="soft-panel p-5">
         <h2 className="text-lg font-semibold text-slate-900">1. Your carrier</h2>
 
-        {/* Toggle between catalog and manual */}
+        {/* Toggle between carrier list and manual */}
         <div className="mt-3 flex gap-2">
           <button
             type="button"
@@ -224,7 +224,7 @@ export function CheckForm({
                 : "border border-slate-300 text-slate-600 hover:bg-slate-50"
             }`}
           >
-            Select from catalog
+            Choose a carrier
           </button>
           <button
             type="button"
@@ -323,9 +323,9 @@ export function CheckForm({
                 <button
                   type="button"
                   onClick={lookupCode}
-                  className="shrink-0 rounded-full border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                  className="secondary-cta shrink-0 px-3 py-2 text-sm"
                 >
-                  Load
+                  Load carrier
                 </button>
               </div>
               {codeMsg && <p className="mt-1 text-xs text-slate-500">{codeMsg}</p>}
@@ -551,7 +551,7 @@ export function CheckForm({
           disabled={submitting}
           className="primary-cta px-5 py-2.5 font-medium disabled:opacity-60"
         >
-          {submitting ? "Checking…" : "Check compatibility"}
+          {submitting ? "Checking…" : "Check my trip"}
         </button>
       </div>
     </form>

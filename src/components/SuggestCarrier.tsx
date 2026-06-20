@@ -4,7 +4,7 @@ import { useState } from "react";
 
 const input = "soft-input";
 
-// Lightweight demand capture: which carriers should we add to the curated catalog?
+// Lightweight demand capture: which carriers should we add to the carrier list?
 export function SuggestCarrier() {
   const [carrier, setCarrier] = useState("");
   const [email, setEmail] = useState("");
@@ -41,7 +41,7 @@ export function SuggestCarrier() {
     <section className="soft-panel p-5">
       <h2 className="text-lg font-semibold text-slate-900">Don&apos;t see your carrier?</h2>
       <p className="mt-1 text-sm text-slate-600">
-        We track a curated set, not every bag. Tell us which carrier to add and we&apos;ll look into
+        We track a smaller set, not every bag. Tell us which carrier to add and we&apos;ll look into
         verifying its dimensions.
       </p>
       {status === "done" ? (

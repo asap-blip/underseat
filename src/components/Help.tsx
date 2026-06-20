@@ -81,13 +81,13 @@ export function RecommendationHelp() {
     <HelpPanel title="How we choose recommended carriers">
       <p>
         We match your pet&apos;s size and weight against the usable interior space and weight rating of
-        each carrier in our <strong>curated</strong> catalog (not every carrier on the market).
+        each carrier in our <strong>carrier list</strong> (not every carrier on the market).
       </p>
       <p>
         Results are a <strong>likely fit, not a guarantee</strong> — we can&apos;t know your pet&apos;s
         exact shape or behaviour, and this step doesn&apos;t check airline rules yet (do that next).
       </p>
-      <p>Carriers are ranked by fit and airline-friendliness, <strong>never by payout</strong>. Shop links are affiliate links — we may earn a commission from qualifying purchases.</p>
+      <p>Carriers are ranked by fit and airline rules, <strong>never by commission</strong>. Shop links are affiliate links — we may earn a commission from qualifying purchases.</p>
     </HelpPanel>
   );
 }

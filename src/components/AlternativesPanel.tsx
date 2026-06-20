@@ -14,9 +14,9 @@ export function AlternativesPanel({
   if (alternatives.length === 0) {
     return (
       <section className="soft-panel p-5">
-        <h2 className="text-lg font-semibold text-slate-900">We don&apos;t have a guaranteed fit in our catalog yet</h2>
+        <h2 className="text-lg font-semibold text-slate-900">We don&apos;t have a clear fit in our carrier list yet</h2>
         <p className="mt-2 text-sm text-slate-600">
-          No carriers in our curated catalog clear every leg of your itinerary. That doesn&apos;t mean one doesn&apos;t exist — we just haven&apos;t verified it yet.
+          No carriers in our carrier list clear every leg of your itinerary. That doesn&apos;t mean one doesn&apos;t exist — we just haven&apos;t verified it yet.
         </p>
         <Link
           href="/carriers"
@@ -59,7 +59,7 @@ export function AlternativesPanel({
                   target="_blank"
                   className="primary-cta px-3 py-1.5 text-sm"
                 >
-                  Buy this carrier
+                  Shop this carrier
                 </Link>
                 <span className="text-[10px] text-slate-400">Affiliate link</span>
               </div>
@@ -69,7 +69,7 @@ export function AlternativesPanel({
       </div>
       <p className="mt-3 rounded-2xl bg-slate-50 px-3 py-2 text-[11px] text-slate-500">
         These are affiliate links — we may earn a commission from qualifying purchases. Suggestions are
-        ranked by fit against your itinerary, never by payout.
+        ranked by fit against your itinerary, never by commission.
       </p>
     </section>
   );

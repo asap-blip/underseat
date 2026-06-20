@@ -143,7 +143,7 @@ export function CheckWidget({
         disabled={loading}
         className="primary-cta mt-4 w-full px-4 py-2 font-medium disabled:opacity-60"
       >
-        {loading ? "Checking…" : "Check compatibility"}
+        {loading ? "Checking…" : "Check my trip"}
       </button>
 
       {verdict && (

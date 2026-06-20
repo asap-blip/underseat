@@ -73,7 +73,7 @@ export function ReverseSearch({ carriers }: { carriers: Carrier[] }) {
       {results && (
         <>
           <div className="rounded-2xl bg-slate-50 px-3 py-2 text-xs text-slate-500">
-            These are likely-fit estimates from our curated catalog based on size and weight — not a
+            These are likely-fit estimates from our carrier list based on size and weight — not a
             guarantee. They don&apos;t account for your pet&apos;s exact shape or behaviour, and they
             don&apos;t yet check airline rules. Pick one and run a trip check next.
           </div>
@@ -82,7 +82,7 @@ export function ReverseSearch({ carriers }: { carriers: Carrier[] }) {
 
           {recommended.length === 0 ? (
             <p className="text-sm text-slate-600">
-              Nothing in our curated catalog looks like a comfortable fit for those measurements. The
+              Nothing in our carrier list looks like a comfortable fit for those measurements. The
               carriers below are likely too small.
             </p>
           ) : (

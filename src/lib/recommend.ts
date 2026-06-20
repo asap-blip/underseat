@@ -1,6 +1,6 @@
 import type { Carrier } from "@/lib/data/types";
 
-// Reverse search: given a pet, suggest carriers from the curated catalog that
+// Reverse search: given a pet, suggest carriers from the carrier list that
 // are LIKELY to fit. This is deliberately conservative and honest — it is a
 // size/weight heuristic, not a guarantee, and it never claims a pet will be
 // comfortable or accepted (airline rules are checked separately downstream).
