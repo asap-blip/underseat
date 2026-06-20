@@ -82,7 +82,7 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
       </div>
 
       {/* Inputs: airline, cabin, length, width, height. Stacks on 375px, row on sm+. */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-[2fr_0.8fr_auto_auto_auto] sm:items-end">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-[2.4fr_1.2fr_0.7fr_0.7fr_0.7fr] sm:items-end">
         <div className="col-span-2 sm:col-span-1">
           <label className="soft-label">Airline</label>
           <select
@@ -149,7 +149,7 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
 
       {/* Pet weight + CTA row */}
       <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
-        <div className="w-full sm:flex-1">
+        <div className="w-full sm:w-44">
           <label className="soft-label">
             Pet weight (kg) <span className="font-normal text-slate-400">optional</span>
           </label>
