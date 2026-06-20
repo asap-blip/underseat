@@ -82,7 +82,7 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
       </div>
 
       {/* Inputs: airline, cabin, length, width, height. Stacks on 375px, row on sm+. */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-[1fr_auto_auto_auto_auto] sm:items-end">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-[2fr_0.8fr_auto_auto_auto] sm:items-end">
         <div className="col-span-2 sm:col-span-1">
           <label className="soft-label">Airline</label>
           <select
@@ -148,8 +148,8 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
       </div>
 
       {/* Pet weight + CTA row */}
-      <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="w-full sm:w-40">
+      <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
+        <div className="w-full sm:flex-1">
           <label className="soft-label">
             Pet weight (kg) <span className="font-normal text-slate-400">optional</span>
           </label>
@@ -167,7 +167,7 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
         <button
           type="submit"
           disabled={submitting}
-          className="primary-cta w-full px-6 py-2.5 text-sm disabled:opacity-60 sm:w-auto sm:px-8"
+          className="primary-cta w-full px-6 py-2.5 text-sm disabled:opacity-60 sm:w-auto sm:shrink-0 sm:px-8"
         >
           {submitting ? "Checking…" : (
             <>
