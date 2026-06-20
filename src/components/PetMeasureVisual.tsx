@@ -99,16 +99,16 @@ export function PetMeasureVisual() {
         <line x1="74" y1="36" x2="276" y2="36" className="stroke-brand-600" strokeWidth="1.5" markerStart="url(#ah)" markerEnd="url(#ah)" />
         <line x1="74" y1="42" x2="74" y2="92" className="stroke-slate-300" strokeWidth="1" strokeDasharray="3 3" />
         <line x1="276" y1="42" x2="276" y2="92" className="stroke-slate-300" strokeWidth="1" strokeDasharray="3 3" />
-        <text x="175" y="28" textAnchor="middle" className="fill-slate-600 text-[11px]">Length — nose to base of tail</text>
+        <text x="175" y="28" textAnchor="middle" className="fill-slate-600 text-[11px]">Length: nose to base of tail</text>
 
         {/* height arrow (floor -> top of head/ears) */}
         <line x1="44" y1="172" x2="44" y2="58" className="stroke-brand-600" strokeWidth="1.5" markerStart="url(#ah)" markerEnd="url(#ah)" />
-        <text x="0" y="0" transform="translate(20,150) rotate(-90)" className="fill-slate-600 text-[11px]">Height — floor to head/ears</text>
+        <text x="0" y="0" transform="translate(20,150) rotate(-90)" className="fill-slate-600 text-[11px]">Height: floor to head/ears</text>
 
         {/* width mini-diagram (head-on body cross-section) */}
         <ellipse cx="78" cy="208" rx="30" ry="15" className="fill-slate-300 stroke-slate-400" strokeWidth="1.5" />
         <line x1="48" y1="232" x2="108" y2="232" className="stroke-brand-600" strokeWidth="1.5" markerStart="url(#ah)" markerEnd="url(#ah)" />
-        <text x="124" y="214" className="fill-slate-600 text-[11px]">Width — widest part of</text>
+        <text x="124" y="214" className="fill-slate-600 text-[11px]">Width: widest part</text>
         <text x="124" y="228" className="fill-slate-600 text-[11px]">the shoulders or body</text>
       </svg>
 

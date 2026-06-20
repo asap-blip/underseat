@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
 export async function GET() {
   return NextResponse.json({
-    service: "flypewpet compatibility check",
+    service: "Underseat compatibility check",
     method: "POST",
     contract: "CheckInput -> CheckResponse",
   });

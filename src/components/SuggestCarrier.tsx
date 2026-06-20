@@ -46,7 +46,7 @@ export function SuggestCarrier() {
       </p>
       {status === "done" ? (
         <p className="mt-4 rounded-2xl bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-          Thanks — we&apos;ve logged your suggestion.
+          Thanks. We&apos;ve logged your suggestion.
         </p>
       ) : (
         <form onSubmit={submit} className="mt-4 grid gap-3 sm:grid-cols-[2fr_2fr_auto]">
@@ -69,7 +69,17 @@ export function SuggestCarrier() {
             disabled={status === "saving" || !carrier.trim()}
             className="primary-cta px-4 py-2 text-sm disabled:opacity-60"
           >
-            {status === "saving" ? "Submitting…" : "Suggest carrier"}
+            {status === "saving" ? (
+              <>
+                <span aria-hidden="true">…</span>
+                Saving
+              </>
+            ) : (
+              <>
+                <span aria-hidden="true">+</span>
+                Suggest
+              </>
+            )}
           </button>
           {message && <span className="text-xs text-rose-600 sm:col-span-3">{message}</span>}
         </form>

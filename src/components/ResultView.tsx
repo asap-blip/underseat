@@ -31,7 +31,7 @@ export function ResultView({
             <div className="text-sm font-medium text-slate-500">{carrier.brand}</div>
             <h1 className="text-2xl font-semibold text-slate-900">{carrier.model}</h1>
             <p className="mt-1 text-slate-600">
-              {multiLeg ? "Overall itinerary verdict — " : ""}
+              {multiLeg ? "Overall itinerary verdict: " : ""}
               {verdictHeadline(result.overall)}
             </p>
             {multiLeg && (
@@ -156,7 +156,6 @@ export function ResultView({
 
       <AlternativesPanel
         alternatives={alternatives}
-        checkToken={shareToken}
         heading={result.overall === "PASS" ? "Other carriers that also fit" : "Better-fit alternatives"}
       />
 

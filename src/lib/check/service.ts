@@ -188,7 +188,7 @@ function whyBetter(alt: Carrier, current: Carrier, contexts: LegContext[]): stri
     reasons.push(`Roughly ${Math.round(altSpare - curSpare)} cm more clearance against your tightest airline`);
   }
   if (alt.verification === "team_verified" && current.verification !== "team_verified") {
-    reasons.push("Dimensions verified by our team");
+    reasons.push("Dimensions checked by us");
   }
   if (reasons.length === 0) reasons.push("Fits every leg of your itinerary");
   return reasons;

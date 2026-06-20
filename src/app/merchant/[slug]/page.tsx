@@ -32,7 +32,7 @@ export default async function MerchantDemoPage({
     <div className="space-y-8">
       <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
         <strong className="text-slate-800">Merchant demo.</strong> This page simulates a retailer&apos;s
-        product page with the flypewpet checker embedded. The widget calls the same{" "}
+        product page with the Underseat checker embedded. The widget calls the same{" "}
         <code className="rounded bg-white px-1">/api/check</code> contract a real embed would use.
       </div>
 
@@ -79,7 +79,7 @@ export default async function MerchantDemoPage({
                   href={`/check?carrier=${carrier!.id}`}
                   className="mt-3 inline-block rounded-full border border-slate-300 px-3 py-1.5 text-sm font-medium hover:bg-slate-50"
                 >
-                  Check my trip
+                  Check
                 </Link>
               </div>
             ))}

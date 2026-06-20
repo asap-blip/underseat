@@ -5,11 +5,11 @@ import { useState } from "react";
 import type { Airline, CabinType } from "@/lib/data/types";
 import type { Verdict } from "@/lib/rules/engine";
 import type { Reason } from "@/lib/rules/reasonCodes";
-import { verdictStyles } from "@/lib/ui";
 import { ALL_CABINS, CABIN_LABELS, coverageBadge, isCabinModeled, type CoverageMap } from "@/lib/coverage";
+import { VerdictBadge } from "./VerdictBadge";
 
 // Compact, embeddable compatibility checker. This is the component intended to
-// later power an on-site merchant widget — it talks only to the public
+// later power an on-site merchant widget. It talks only to the public
 // /api/check contract and renders a self-contained verdict.
 export function CheckWidget({
   carrierId,
@@ -101,7 +101,7 @@ export function CheckWidget({
           {ALL_CABINS.filter((c) => !(coverage[airlineId]?.cabins ?? ["economy"]).includes(c)).length > 0 && (
             <optgroup label="Not separately modeled (uses economy)">
               {ALL_CABINS.filter((c) => !(coverage[airlineId]?.cabins ?? ["economy"]).includes(c)).map((c) => (
-                <option key={c} value={c}>{CABIN_LABELS[c]} — not modeled</option>
+                <option key={c} value={c}>{CABIN_LABELS[c]}: uses economy rule</option>
               ))}
             </optgroup>
           )}
@@ -132,7 +132,7 @@ export function CheckWidget({
 
       {!isCabinModeled(coverage[airlineId], cabin) && (
         <p className="mt-3 rounded-2xl bg-amber-50 px-3 py-2 text-xs text-amber-800">
-          {CABIN_LABELS[cabin]} isn&apos;t separately modeled for this airline — we&apos;ll evaluate
+          {CABIN_LABELS[cabin]} is not separately modeled for this airline. We will evaluate
           against its economy rule.
         </p>
       )}
@@ -143,16 +143,19 @@ export function CheckWidget({
         disabled={loading}
         className="primary-cta mt-4 w-full px-4 py-2 font-medium disabled:opacity-60"
       >
-        {loading ? "Checking…" : "Check my trip"}
+        {loading ? "Checking…" : (
+          <>
+            <span aria-hidden="true">⌕</span>
+            Check
+          </>
+        )}
       </button>
 
       {verdict && (
         <div className="mt-4 rounded-2xl border border-slate-200 bg-white/90 p-4">
           <div className="flex items-center justify-between">
             <span className="text-sm text-slate-600">Result</span>
-            <span className={`rounded-full px-3 py-1 text-sm font-semibold ring-1 ${verdictStyles[verdict].bg} ${verdictStyles[verdict].text} ${verdictStyles[verdict].ring}`}>
-              {verdict}
-            </span>
+            <VerdictBadge verdict={verdict} />
           </div>
           <ul className="mt-3 space-y-1 text-xs text-slate-600">
             {reasons.map((r, i) => (

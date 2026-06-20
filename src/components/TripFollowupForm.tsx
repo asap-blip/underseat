@@ -67,12 +67,12 @@ export function TripFollowupForm({
       <h2 className="text-lg font-semibold text-slate-900">Did it actually work? Let us follow up</h2>
       <p className="mt-1 text-sm text-slate-600">
         Save your trip and we&apos;ll send one email about a day after you fly to ask whether this
-        carrier was accepted. Your answer helps other travelers — we only use your email for this.
+        carrier was accepted. Your answer helps other travelers. We only use your email for this.
       </p>
 
       {done ? (
         <p className="mt-4 rounded-2xl bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-          Thanks — your trip is saved. We&apos;ll be in touch after your departure date. You can
+          Thanks. Your trip is saved. We&apos;ll be in touch after your departure date. You can
           reply or ignore it; no spam.
         </p>
       ) : (

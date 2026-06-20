@@ -17,7 +17,7 @@ export default async function CarriersPage() {
         </p>
         <p className="mt-2 text-sm text-slate-500">
           Not sure which to pick?{" "}
-          <Link href="/find" className="text-brand-700 underline">Find a pet carrier</Link> and
+          <Link href="/find" className="text-brand-700 underline">Find by pet size</Link> and
           we&apos;ll recommend matches. Shop links are affiliate links.
         </p>
       </div>

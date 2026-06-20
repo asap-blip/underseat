@@ -10,10 +10,19 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "flypewpet — Pet carrier flight compatibility",
+  title: "Underseat: Pet carrier flight compatibility",
   description:
-    "Check whether a specific pet carrier meets the in-cabin rules for your exact flight itinerary — leg by leg, with transparent reasoning.",
+    "Check whether a specific pet carrier meets the in-cabin rules for your exact flight itinerary. Leg by leg, with clear reasons.",
 };
+
+function HeaderCheckCta({ className = "" }: { className?: string }) {
+  return (
+    <Link href="/check" className={`primary-cta px-4 py-2 text-sm ${className}`}>
+      <span className="cta-icon" aria-hidden="true">⌕</span>
+      Check
+    </Link>
+  );
+}
 
 export default function RootLayout({
   children,
@@ -27,26 +36,25 @@ export default function RootLayout({
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
             <Link href="/" className="flex items-center gap-2 font-semibold text-slate-900">
               <span className="paw-mark h-8 w-8 text-sm">🐾</span>
-              <span>flypewpet</span>
+              <span>Underseat</span>
             </Link>
-            <nav className="hidden items-center gap-5 text-sm text-slate-600 md:flex">
-              <Link href="/find" className="hover:text-navy">Find a pet carrier</Link>
-              <Link href="/carriers" className="hover:text-navy">Shop carriers</Link>
-              <Link href="/rules" className="hover:text-navy">Airline pet rules</Link>
-              <Link href="/check" className="primary-cta px-4 py-2 text-sm">
-                Check my trip
+            <nav className="flex items-center gap-1 text-sm text-slate-600">
+              <Link href="/find" className="hidden md:inline-flex nav-link">Find</Link>
+              <Link href="/carriers" className="hidden md:inline-flex nav-link">Shop</Link>
+              <Link href="/rules" className="hidden md:inline-flex nav-link">Pet rules</Link>
+              <HeaderCheckCta className="hidden md:inline-flex" />
+              <Link href="/check" className="inline-flex md:hidden nav-link">
+                <span className="cta-icon" aria-hidden="true">⌕</span>
+                Check
               </Link>
             </nav>
-            <Link href="/check" className="primary-cta px-4 py-2 text-sm md:hidden">
-              Check my trip
-            </Link>
           </div>
         </header>
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-10">{children}</main>
         <footer className="border-t border-stone-200/70 bg-white/70">
           <div className="mx-auto max-w-6xl space-y-2 px-4 py-6 text-xs text-slate-500">
             <p>
-              flypewpet is a compatibility checker, not a guarantee. Airlines make the
+              Underseat is a compatibility checker, not a guarantee. Airlines make the
               final acceptance decision at the gate. Always confirm current policy with
               your airline before you travel.
             </p>

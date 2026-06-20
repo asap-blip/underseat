@@ -45,12 +45,12 @@ export function RequestAirline() {
       <h2 className="text-lg font-semibold text-slate-900">Missing an airline?</h2>
       <p className="mt-1 text-sm text-slate-600">
         We don&apos;t cover every airline or cabin yet. Tell us which one you need and we&apos;ll
-        prioritize it — we&apos;d rather add what travelers actually want than pretend it&apos;s there.
+        prioritize it. We&apos;d rather add what travelers actually want than pretend it&apos;s there.
       </p>
 
       {status === "done" ? (
         <p className="mt-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-          Thanks — we&apos;ve logged your request. Want another? Just submit again.
+          Thanks. We&apos;ve logged your request. Want another? Just submit again.
         </p>
       ) : (
         <form onSubmit={submit} className="mt-4 grid gap-3 sm:grid-cols-3">

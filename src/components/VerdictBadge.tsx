@@ -1,6 +1,12 @@
 import type { Verdict } from "@/lib/rules/engine";
 import { verdictStyles } from "@/lib/ui";
 
+const verdictIcons: Record<Verdict, string> = {
+  PASS: "✓",
+  BORDERLINE: "⚠",
+  NO: "×",
+};
+
 export function VerdictBadge({ verdict, size = "md" }: { verdict: Verdict; size?: "sm" | "md" | "lg" }) {
   const s = verdictStyles[verdict];
   const sizing =
@@ -11,6 +17,9 @@ export function VerdictBadge({ verdict, size = "md" }: { verdict: Verdict; size?
         : "px-3 py-1 text-sm";
   return (
     <span className={`inline-flex items-center gap-1.5 rounded-full font-semibold ring-1 ${s.bg} ${s.text} ${s.ring} ${sizing}`}>
+      <span aria-hidden="true" className="font-extrabold">
+        {verdictIcons[verdict]}
+      </span>
       {s.label}
     </span>
   );

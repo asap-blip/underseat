@@ -81,7 +81,7 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
         <span className="text-xs text-slate-500">For one flight leg.</span>
       </div>
 
-      {/* Inputs: airline + cabin + L + W + H — stacks on 375px, row on sm+ */}
+      {/* Inputs: airline, cabin, length, width, height. Stacks on 375px, row on sm+. */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-[1fr_auto_auto_auto_auto] sm:items-end">
         <div className="col-span-2 sm:col-span-1">
           <label className="soft-label">Airline</label>
@@ -169,7 +169,12 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
           disabled={submitting}
           className="primary-cta w-full px-6 py-2.5 text-sm disabled:opacity-60 sm:w-auto sm:px-8"
         >
-          {submitting ? "Checking…" : "Check my trip"}
+          {submitting ? "Checking…" : (
+            <>
+              <span aria-hidden="true">⌕</span>
+              Check
+            </>
+          )}
         </button>
       </div>
 

@@ -13,7 +13,7 @@ export default async function FindPage() {
         <h1 className="mt-4 text-2xl font-semibold text-slate-900">Find a pet carrier</h1>
         <p className="mt-1 max-w-2xl text-slate-600">
           Enter your pet&apos;s size and we&apos;ll suggest carriers from our carrier list that are
-          likely to fit — then you can check any of them against your flights.
+          likely to fit. Then you can check any of them against your flights.
         </p>
         <p className="mt-2 max-w-2xl text-xs text-slate-400">
           We track a small, hand-checked set of carriers rather than every bag on the market. These

@@ -325,7 +325,8 @@ export function CheckForm({
                   onClick={lookupCode}
                   className="secondary-cta shrink-0 px-3 py-2 text-sm"
                 >
-                  Load carrier
+                  <span aria-hidden="true">⌕</span>
+                  Load
                 </button>
               </div>
               {codeMsg && <p className="mt-1 text-xs text-slate-500">{codeMsg}</p>}
@@ -458,7 +459,7 @@ export function CheckForm({
                       {unsupportedCabins.length > 0 && (
                         <optgroup label="Not separately modeled (uses economy)">
                           {unsupportedCabins.map((c) => (
-                            <option key={c} value={c}>{CABIN_LABELS[c]} — not modeled</option>
+                            <option key={c} value={c}>{CABIN_LABELS[c]}: uses economy rule</option>
                           ))}
                         </optgroup>
                       )}
@@ -487,7 +488,7 @@ export function CheckForm({
                       {airlines.map((a) => (
                         <option key={a.id} value={a.id}>{a.name}</option>
                       ))}
-                      <option value={UNKNOWN_OPERATING}>Another airline — not listed / unknown</option>
+                      <option value={UNKNOWN_OPERATING}>Another airline, not listed or unknown</option>
                     </select>
                   </div>
                 </div>
@@ -503,8 +504,8 @@ export function CheckForm({
                   <p className="mt-3 rounded-2xl bg-rose-50 px-3 py-2 text-xs text-rose-800">
                     You marked this leg as operated by an airline we don&apos;t model yet. We&apos;ll show an
                     indicative result based on {airlineName(leg.marketedCarrierId || leg.airlineId)}, but we
-                    <strong> can&apos;t confirm it</strong> against the policy that actually applies — this leg
-                    will be capped at <strong>BORDERLINE</strong> with reduced confidence. Confirm directly
+                    <strong> can&apos;t confirm it</strong> against the policy that actually applies. This leg
+                    will be capped at <strong>Tight fit</strong> with reduced confidence. Confirm directly
                     with the operating airline.
                   </p>
                 )}
@@ -514,7 +515,7 @@ export function CheckForm({
                   leg.operatingCarrierId !== leg.airlineId && (
                     <p className="mt-2 rounded-2xl bg-sky-50 px-3 py-2 text-xs text-sky-800">
                       Rules will be evaluated against the operating carrier, {airlineName(leg.operatingCarrierId)}
-                      {codeshareHere ? " — this looks like a codeshare/partner-operated flight." : "."}
+                      {codeshareHere ? ", which looks like a codeshare or partner-operated flight." : "."}
                     </p>
                   )}
               </div>
@@ -525,14 +526,14 @@ export function CheckForm({
         {/* Trip-level pre-submit warnings */}
         {distinctEvalAirlines.size > 1 && (
           <p className="mt-4 rounded-2xl bg-amber-50 px-3 py-2 text-xs text-amber-800">
-            Your itinerary uses more than one airline. Each leg is checked separately — acceptance on one
+            Your itinerary uses more than one airline. Each leg is checked separately. Acceptance on one
             airline does <strong>not</strong> guarantee acceptance on another.
           </p>
         )}
         {hasCodeshare && (
           <p className="mt-2 rounded-2xl bg-sky-50 px-3 py-2 text-xs text-sky-800">
             A leg may be operated by a partner (codeshare). The operating carrier&apos;s pet policy is what
-            applies at the gate — confirm directly with them.
+            applies at the gate. Confirm directly with them.
           </p>
         )}
         {hasUnknownOperating && (
@@ -551,7 +552,12 @@ export function CheckForm({
           disabled={submitting}
           className="primary-cta px-5 py-2.5 font-medium disabled:opacity-60"
         >
-          {submitting ? "Checking…" : "Check my trip"}
+          {submitting ? "Checking…" : (
+            <>
+              <span aria-hidden="true">⌕</span>
+              Check
+            </>
+          )}
         </button>
       </div>
     </form>

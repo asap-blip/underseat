@@ -54,8 +54,8 @@ export function MerchantSignupForm() {
           <select className="soft-input">
             <option value="">Select…</option>
             <option value="under-10k">Under 10k visits</option>
-            <option value="10k-50k">10k – 50k visits</option>
-            <option value="50k-200k">50k – 200k visits</option>
+            <option value="10k-50k">10k to 50k visits</option>
+            <option value="50k-200k">50k to 200k visits</option>
             <option value="200k+">200k+ visits</option>
           </select>
         </div>

@@ -27,7 +27,7 @@ export function SaveCheckForm({
     e.preventDefault();
     setError(null);
     if (!shareToken) {
-      setError("No result to save — run a check first.");
+      setError("No result to save. Run a check first.");
       return;
     }
     startTransition(async () => {

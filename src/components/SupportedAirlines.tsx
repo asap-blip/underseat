@@ -50,7 +50,7 @@ export function SupportedAirlines({ coverage }: { coverage: AirlineCoverage[] })
       </div>
 
       <div className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
-        This is our full current coverage — not every airline, cabin, aircraft, or route. Verdicts depend on
+        This is our full current coverage. Not every airline, cabin, aircraft, or route is modeled. Verdicts depend on
         the airline and cabin you choose. Cabins marked as fallback use the Economy rule with an
         unverified cabin-specific note.
       </div>

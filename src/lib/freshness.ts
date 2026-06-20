@@ -22,12 +22,12 @@ export function freshness(lastVerifiedAt?: string | null, now: Date = new Date()
   }
   const ageDays = Math.max(0, Math.floor((now.getTime() - verified.getTime()) / 86_400_000));
   if (ageDays > STALE_AFTER_DAYS) {
-    return { band: "stale", ageDays, label: `Stale · verified ${ageDays}d ago` };
+    return { band: "stale", ageDays, label: "Stale review" };
   }
   if (ageDays > AGING_AFTER_DAYS) {
-    return { band: "aging", ageDays, label: `Aging · verified ${ageDays}d ago` };
+    return { band: "aging", ageDays, label: "Aging review" };
   }
-  return { band: "fresh", ageDays, label: `Fresh · verified ${ageDays}d ago` };
+  return { band: "fresh", ageDays, label: "Fresh review" };
 }
 
 export const freshnessStyles: Record<FreshnessBand, string> = {

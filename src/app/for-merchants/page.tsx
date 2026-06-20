@@ -54,7 +54,7 @@ const tiers = [
   },
 ];
 
-const embedSnippet = `<script src="https://flypewpet.vercel.app/widget.js" data-carrier-id="CARRIER_ID" data-airline="unlimited"></script>`;
+const embedSnippet = `<script src="https://YOUR_UNDERSEAT_DOMAIN/widget.js" data-carrier-id="CARRIER_ID" data-airline="unlimited"></script>`;
 
 export default async function ForMerchantsPage() {
   const repo = getRepository();
@@ -173,7 +173,7 @@ export default async function ForMerchantsPage() {
             },
             {
               q: "Can I customize the look?",
-              a: "Growth and Pro plans support custom colors and branding. The Starter plan uses the default flypewpet styling.",
+              a: "Growth and Pro plans support custom colors and branding. The Starter plan uses the default Underseat styling.",
             },
             {
               q: "How do affiliate links work?",
@@ -192,7 +192,7 @@ export default async function ForMerchantsPage() {
       <section className="rounded-[2rem] bg-slate-900 p-8 text-center text-slate-100">
         <h2 className="text-2xl font-semibold">Ready to reduce returns and boost conversions?</h2>
         <p className="mx-auto mt-2 max-w-lg text-sm text-slate-300">
-          Join pet retailers who use flypewpet to help customers buy with confidence.
+          Join pet retailers who use Underseat to help customers buy with confidence.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Link

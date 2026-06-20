@@ -48,7 +48,7 @@ export function ReverseSearch({ carriers }: { carriers: Carrier[] }) {
       <form onSubmit={search} className="soft-panel p-5">
         <h2 className="text-lg font-semibold text-slate-900">Tell us about your pet</h2>
         <p className="mt-1 text-sm text-slate-600">
-          Weight is required. Measurements are optional but make the match much more accurate.
+          Weight is required. Measurements are optional, but they make the match more accurate.
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
           <div>
@@ -56,16 +56,17 @@ export function ReverseSearch({ carriers }: { carriers: Carrier[] }) {
             <input type="number" step="0.1" min="0.1" className={input} value={weightKg} onChange={(e) => setWeightKg(e.target.value)} required />
           </div>
           <div>
-            <label className={label}>Length nose–tail (cm, optional)</label>
+            <label className={label}>Length, nose to tail (cm, optional)</label>
             <input type="number" step="0.5" className={input} value={lengthCm} onChange={(e) => setLengthCm(e.target.value)} />
           </div>
           <div>
-            <label className={label}>Standing height (cm · floor to head/ears, optional)</label>
+            <label className={label}>Standing height (cm, optional)</label>
             <input type="number" step="0.5" className={input} value={heightCm} onChange={(e) => setHeightCm(e.target.value)} />
           </div>
         </div>
         <button type="submit" className="primary-cta mt-4 px-5 py-2.5 text-sm">
-          Find matching carriers
+          <span aria-hidden="true">↗</span>
+          Find
         </button>
         <PetMeasureHelp />
       </form>
@@ -73,9 +74,9 @@ export function ReverseSearch({ carriers }: { carriers: Carrier[] }) {
       {results && (
         <>
           <div className="rounded-2xl bg-slate-50 px-3 py-2 text-xs text-slate-500">
-            These are likely-fit estimates from our carrier list based on size and weight — not a
-            guarantee. They don&apos;t account for your pet&apos;s exact shape or behaviour, and they
-            don&apos;t yet check airline rules. Pick one and run a trip check next.
+            These are likely-fit estimates from our carrier list based on size and weight. They are not a
+            guarantee, do not account for your pet&apos;s exact shape or behavior, and do not check airline
+            rules yet. Pick one and run a trip check next.
           </div>
 
           <RecommendationHelp />
@@ -96,12 +97,12 @@ export function ReverseSearch({ carriers }: { carriers: Carrier[] }) {
           {excluded.length > 0 && (
             <details className="rounded-2xl border border-slate-200 bg-white/80 p-4">
               <summary className="cursor-pointer text-sm font-medium text-slate-600">
-                {excluded.length} carrier{excluded.length === 1 ? "" : "s"} we didn&apos;t recommend (likely too small or over weight)
+                {excluded.length} carrier{excluded.length === 1 ? "" : "s"} not recommended
               </summary>
               <ul className="mt-2 space-y-1 text-xs text-slate-500">
                 {excluded.map((rec) => (
                   <li key={rec.carrier.id}>
-                    {rec.carrier.brand} {rec.carrier.model} — {rec.reasons[0]}
+                    {rec.carrier.brand} {rec.carrier.model}: {rec.reasons[0]}
                   </li>
                 ))}
               </ul>
@@ -136,24 +137,20 @@ function RecommendationCard({ rec }: { rec: CarrierRecommendation }) {
           </li>
         ))}
       </ul>
-      <div className="mt-4 flex items-center justify-between gap-2">
-        <Link
-          href={`/check?carrier=${carrier.id}`}
-          className="primary-cta px-3 py-1.5 text-sm"
-        >
-          Check my trip →
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        <Link href={`/check?carrier=${carrier.id}`} className="primary-cta px-3 py-1.5 text-sm">
+          <span aria-hidden="true">⌕</span>
+          Check
         </Link>
-        <div className="flex flex-col items-end">
-          <Link
-            href={trackedClickUrl(carrier.id)}
-            rel="nofollow sponsored noopener"
-            target="_blank"
-            className="text-sm font-medium text-slate-600 hover:text-slate-900"
-          >
-            Shop{carrier.priceUsd != null ? ` ~$${carrier.priceUsd}` : ""}
-          </Link>
-          <span className="text-[10px] text-slate-400">Affiliate link</span>
-        </div>
+        <Link
+          href={trackedClickUrl(carrier.id)}
+          rel="nofollow sponsored noopener"
+          target="_blank"
+          className="secondary-cta px-3 py-1.5 text-sm"
+        >
+          <span aria-hidden="true">↗</span>
+          Shop
+        </Link>
       </div>
     </div>
   );

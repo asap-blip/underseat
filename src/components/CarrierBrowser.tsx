@@ -1,12 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Carrier } from "@/lib/data/types";
-import { trackedClickUrl } from "@/lib/affiliate";
-import { CarrierStatus } from "./CarrierStatus";
+import { CarrierCard } from "./CarrierCard";
 import { VerificationLegend } from "./VerificationLegend";
-import { carrierEvidence } from "@/lib/carrierStatus";
 
 export function CarrierBrowser({ carriers }: { carriers: Carrier[] }) {
   const [q, setQ] = useState("");
@@ -38,14 +35,14 @@ export function CarrierBrowser({ carriers }: { carriers: Carrier[] }) {
       <div className="grid gap-4 sm:grid-cols-2">
         <input
           className="soft-input"
-          placeholder="Search by brand, model, or SKU…"
+          placeholder="Search by brand, model, or SKU"
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
         <div className="flex gap-2">
           <input
             className="soft-input"
-            placeholder="Scan or enter a product code (e.g. FPP-SLP-AIR)"
+            placeholder="Enter a product code, such as FPP-SLP-AIR"
             value={code}
             onChange={(e) => setCode(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && lookup()}
@@ -55,7 +52,8 @@ export function CarrierBrowser({ carriers }: { carriers: Carrier[] }) {
             onClick={lookup}
             className="secondary-cta shrink-0 px-3 py-2 text-sm"
           >
-            Load carrier
+            <span aria-hidden="true">⌕</span>
+            Load
           </button>
         </div>
       </div>
@@ -64,40 +62,9 @@ export function CarrierBrowser({ carriers }: { carriers: Carrier[] }) {
       <VerificationLegend />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((c) => {
-          return (
-            <div key={c.id} className="flex flex-col rounded-2xl border border-slate-200 bg-white/90 p-5">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div className="text-sm font-medium text-slate-500">{c.brand}</div>
-                  <div className="font-semibold text-slate-900">{c.model}</div>
-                </div>
-                <CarrierStatus status={c.verification} evidence={carrierEvidence(c)} carrier={c} />
-              </div>
-              <dl className="mt-3 space-y-1 text-xs text-slate-500">
-                <div>{c.lengthCm} × {c.widthCm} × {c.heightCm} cm · {c.softSided ? "soft-sided" : "hard-sided"}</div>
-                <div>Empty weight {c.weightKg} kg · SKU {c.sku}</div>
-              </dl>
-              <div className="mt-4 flex items-center justify-between gap-2 pt-2">
-                <Link
-                  href={`/check?carrier=${c.id}`}
-                  className="primary-cta px-3 py-1.5 text-sm"
-                >
-                  Check my trip
-                </Link>
-                <Link
-                  href={trackedClickUrl(c.id)}
-                  rel="nofollow sponsored noopener"
-                  target="_blank"
-                  className="text-sm font-medium text-slate-600 hover:text-slate-900"
-                  title="Affiliate link — we may earn a commission"
-                >
-                  Shop carrier <span className="text-[10px] text-slate-400">(affiliate)</span> →
-                </Link>
-              </div>
-            </div>
-          );
-        })}
+        {filtered.map((carrier) => (
+          <CarrierCard key={carrier.id} carrier={carrier} />
+        ))}
       </div>
       {filtered.length === 0 && (
         <p className="text-sm text-slate-500">No carriers match “{q}”.</p>

@@ -66,7 +66,7 @@ export function TravelerResponseForm({
         <h1 className="text-xl font-semibold text-slate-900">Thank you 🐾</h1>
         <p className="mt-2 text-sm text-slate-600">
           Your answer is recorded{routeText ? ` for ${routeText}` : ""}. It helps other pet owners
-          travel with confidence — and you won&apos;t get any more emails about this trip.
+          travel with confidence. You also won&apos;t get any more emails about this trip.
         </p>
       </div>
     );

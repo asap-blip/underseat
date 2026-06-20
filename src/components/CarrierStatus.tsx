@@ -5,6 +5,14 @@ import type { Carrier, CarrierStatus as Status } from "@/lib/data/types";
 import { STATUS_TONE_CLASS, carrierStatusConfig } from "@/lib/carrierStatus";
 import { freshness } from "@/lib/freshness";
 
+const statusIcons: Record<Status, string> = {
+  team_verified: "✓",
+  traveler_reported: "•",
+  not_verified_yet: "…",
+  failed_check: "!",
+  needs_review: "?",
+};
+
 // One primary status badge + an info popover explaining its meaning, with a
 // secondary evidence line beneath. Replaces the old stacked verification badges.
 export function CarrierStatus({ status, evidence, carrier }: { status: Status; evidence?: string; carrier?: Carrier }) {
@@ -26,6 +34,9 @@ export function CarrierStatus({ status, evidence, carrier }: { status: Status; e
         <span
           className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ring-1 ${STATUS_TONE_CLASS[tone]}`}
         >
+          <span aria-hidden="true" className="mr-1 font-extrabold">
+            {statusIcons[status]}
+          </span>
           {config.label}
         </span>
         <button

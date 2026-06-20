@@ -95,7 +95,7 @@ function evaluateFit(pet: PetInput, carrier: Carrier): CarrierRecommendation {
     );
   }
   if (carrier.softSided) reasons.push("Soft-sided, so it fits more airline cabins");
-  if (carrier.verification === "team_verified") reasons.push("Dimensions verified by our team");
+  if (carrier.verification === "team_verified") reasons.push("Dimensions checked by us");
   if (!measurementsUsed) reasons.push("Based on weight only — add measurements for a size check");
 
   return { carrier, fit, reasons, lengthHeadroomCm, heightHeadroomCm, weightOk, measurementsUsed };
