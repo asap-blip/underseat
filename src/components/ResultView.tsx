@@ -159,6 +159,9 @@ export function ResultView({
         alternatives={alternatives}
         heading={result.overall === "PASS" ? "Other carriers that also fit" : "Better-fit alternatives"}
         urgent={result.overall !== "PASS"}
+        carrierId={carrier.id}
+        airlineId={result.legs[0]?.bookingAirlineId}
+        routeText={result.legs.map((l) => `${l.origin}→${l.destination}`).join(", ")}
       />
 
       {/* Travel Essentials */}
