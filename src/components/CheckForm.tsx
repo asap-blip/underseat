@@ -212,6 +212,11 @@ export function CheckForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* Progress indicator */}
+      <div className="flex items-center gap-2 text-xs text-slate-400">
+        <span className="rounded-full bg-brand-100 px-2 py-0.5 font-medium text-caramel">Step 1 of 3</span>
+        <span>~3 min to complete</span>
+      </div>
       {/* Carrier */}
       <section className="soft-panel p-5">
         <h2 className="text-lg font-semibold text-slate-900">1. Your carrier</h2>
@@ -504,7 +509,10 @@ export function CheckForm({
                     )}
                   </div>
                   <div>
-                    <label className={label}>Cabin</label>
+                    <label className={label}>
+                      Cabin
+                      <span className="ml-1 cursor-help text-slate-400" title="Some cabins fall back to Economy rules if not separately modeled">ⓘ</span>
+                    </label>
                     <select className={input} {...register(`legs.${i}.cabin` as const)}>
                       {supportedCabins.map((c) => (
                         <option key={c} value={c}>{CABIN_LABELS[c]}</option>

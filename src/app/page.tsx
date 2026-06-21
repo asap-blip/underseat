@@ -26,6 +26,10 @@ const howItWorks = [
 
 const faqs = [
   {
+    q: "Can I use this if I do not own a carrier yet?",
+    a: "Yes. Use Find to compare likely-fit options, then run a promising bag through a trip check before you buy.",
+  },
+  {
     q: "Does this guarantee my pet carrier will be accepted?",
     a: "No. Underseat is a compatibility checker, not a guarantee. Airlines make the final decision at check-in or the gate, so confirm current policy before you travel.",
   },
@@ -40,10 +44,6 @@ const faqs = [
   {
     q: "What does Tight fit mean?",
     a: "Tight fit means the carrier is close to a limit, uses incomplete data, or depends on factors like aircraft type. It is worth double-checking before you fly.",
-  },
-  {
-    q: "Can I use this if I do not own a carrier yet?",
-    a: "Yes. Use Find to compare likely-fit options, then run a promising bag through a trip check before you buy.",
   },
 ];
 
@@ -125,6 +125,41 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* How it works */}
+      <section className="grid gap-5 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
+        <div className="soft-panel-muted p-6">
+          <span className="section-eyebrow">
+            <span aria-hidden="true">🧭</span> How it works
+          </span>
+          <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-navy">
+            A quick check before you book.
+          </h2>
+          <p className="mt-3 text-sm leading-7 text-slate-600">
+            Give us the trip details. We handle the rule comparison and explain the result in plain language.
+          </p>
+          <Link href="/result?demo=1" className="primary-cta mt-5 px-4 py-2 text-sm">
+            <span aria-hidden="true">⌕</span>
+            See an example result
+          </Link>
+        </div>
+
+        <div className="grid gap-4">
+          {howItWorks.map((item) => (
+            <div key={item.step} className="soft-panel p-5">
+              <div className="flex gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-extrabold text-caramel">
+                  {item.step}
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-navy">{item.title}</h3>
+                  <p className="mt-1 text-sm leading-7 text-slate-600">{item.copy}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Recommended carriers */}
       <section className="soft-panel p-5 sm:p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -155,8 +190,6 @@ export default async function HomePage() {
           Shop links are affiliate links. We recommend carriers by fit and airline rules first.
         </p>
       </section>
-
-      {/* How it works */}
       <section className="grid gap-5 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
         <div className="soft-panel-muted p-6">
           <span className="section-eyebrow">

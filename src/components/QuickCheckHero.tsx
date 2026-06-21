@@ -72,7 +72,10 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flight-check-form">
+    <form onSubmit={handleSubmit} className="flight-check-form relative overflow-hidden">
+      {/* Animated scan line */}
+      <div className="pointer-events-none absolute inset-0 animate-scan-line bg-gradient-to-r from-transparent via-brand-200/20 to-transparent" aria-hidden="true" />
+
       {/* Header */}
       <div className="mb-4 flex items-center gap-2">
         <span className="section-eyebrow">

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ResultView } from "@/components/ResultView";
 import { checkInputSchema } from "@/lib/validation/schemas";
 import { decodeCheck, runCheck } from "@/lib/check/service";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,11 @@ export default async function ResultPage({
 
   if (!parsed || !parsed.success) {
     return (
-      <div className="soft-panel p-8 text-center">
+      <div className="soft-panel p-8 text-center space-y-6">
+        <Breadcrumbs items={[
+          { label: "Home", href: "/" },
+          { label: "Result" },
+        ]} />
         <h1 className="text-xl font-semibold text-slate-900">We couldn&apos;t read that result link</h1>
         <p className="mt-2 text-slate-600">The link may be incomplete or out of date.</p>
         <Link href="/check" className="primary-cta mt-4 px-5 py-2.5 font-medium">
@@ -42,6 +47,10 @@ export default async function ResultPage({
 
   return (
     <div className="space-y-6">
+      <Breadcrumbs items={[
+        { label: "Home", href: "/" },
+        { label: "Result" },
+      ]} />
       <ResultView response={response} shareToken={d} />
       <div className="flex justify-center">
         <Link href="/check" className="text-sm font-medium text-brand-700 hover:underline">

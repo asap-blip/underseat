@@ -28,6 +28,7 @@ export default function RootLayout({
             <Link href="/" className="flex items-center gap-2 font-semibold text-slate-900">
               <span className="paw-mark h-8 w-8 text-sm">🐾</span>
               <span>Underseat</span>
+              <span className="rounded-full bg-brand-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-caramel">Beta</span>
             </Link>
             <nav className="flex items-center gap-1 text-sm text-slate-600">
               <Link href="/check" className="hidden md:inline-flex nav-link">Check</Link>

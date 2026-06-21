@@ -204,3 +204,17 @@ body {
   color: white;
   box-shadow: 0 10px 20px rgba(168, 111, 29, 0.18);
 }
+
+/* Animated scan line for the trip check form */
+@keyframes scan-line {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+.animate-scan-line {
+  animation: scan-line 3s ease-in-out infinite;
+}
+
+/* Pause animation on user interaction */
+.flight-check-form:focus-within .animate-scan-line {
+  animation-play-state: paused;
+}
