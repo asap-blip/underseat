@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServiceSupabase } from "@/lib/supabase/client";
+import { getServiceSupabase, getSupabase } from "@/lib/supabase/client";
 
 export const runtime = "nodejs";
 
@@ -13,15 +13,13 @@ function slugify(text: string): string {
   return text
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
+    .replace(/^-|-$/g, "")
+    .replace(/-+/g, "-");
 }
 
-// Generate a deterministic carrier id from brand + model, with a random suffix
-// to avoid collisions when the same model is imported multiple times.
+// Carrier ID = slug from "brand-model", e.g. "sherpa-original-deluxe"
 function makeCarrierId(brand: string, model: string): string {
-  const base = `${slugify(brand)}-${slugify(model)}`;
-  const suffix = Math.random().toString(36).slice(2, 6);
-  return `${base}-${suffix}`;
+  return slugify(`${brand}-${model}`);
 }
 
 function parseBool(v: unknown): boolean {
@@ -51,29 +49,36 @@ interface CarrierInput {
   imageUrl?: string | null;
 }
 
-function validateCarrier(input: Record<string, unknown>, index: number): { ok: true; carrier: CarrierInput } | { ok: false; error: string } {
+function validateCarrier(
+  input: Record<string, unknown>,
+  index: number,
+): { ok: true; carrier: CarrierInput } | { ok: false; error: string } {
   const brand = String(input.brand ?? "").trim();
-  const model = String(input.model ?? "").trim();
+  // Accept "name" or "model" as the model field
+  const model = String(input.name ?? input.model ?? "").trim();
   const sku = String(input.sku ?? "").trim();
   const lengthCm = parseNum(input.lengthCm);
   const widthCm = parseNum(input.widthCm);
   const heightCm = parseNum(input.heightCm);
   const weightKg = parseNum(input.weightKg);
 
-  if (!brand) return { ok: false, error: `Row ${index}: brand is required` };
-  if (!model) return { ok: false, error: `Row ${index}: model is required` };
-  if (!sku) return { ok: false, error: `Row ${index}: sku is required` };
-  if (lengthCm == null || lengthCm <= 0) return { ok: false, error: `Row ${index}: length_cm must be a positive number` };
-  if (widthCm == null || widthCm <= 0) return { ok: false, error: `Row ${index}: width_cm must be a positive number` };
-  if (heightCm == null || heightCm <= 0) return { ok: false, error: `Row ${index}: height_cm must be a positive number` };
-  if (weightKg == null || weightKg <= 0) return { ok: false, error: `Row ${index}: weight_kg must be a positive number` };
+  if (!brand) return { ok: false, error: `Item ${index}: brand is required` };
+  if (!model) return { ok: false, error: `Item ${index}: model/name is required` };
+  if (lengthCm == null || lengthCm <= 0)
+    return { ok: false, error: `Item ${index}: length_cm must be a positive number` };
+  if (widthCm == null || widthCm <= 0)
+    return { ok: false, error: `Item ${index}: width_cm must be a positive number` };
+  if (heightCm == null || heightCm <= 0)
+    return { ok: false, error: `Item ${index}: height_cm must be a positive number` };
+  if (weightKg == null || weightKg <= 0)
+    return { ok: false, error: `Item ${index}: weight_kg must be a positive number` };
 
   return {
     ok: true,
     carrier: {
       brand,
       model,
-      sku,
+      sku: sku || `${slugify(brand)}-${slugify(model)}`,
       lengthCm,
       widthCm,
       heightCm,
@@ -105,7 +110,7 @@ export async function POST(req: Request) {
 
   const obj = body as Record<string, unknown>;
 
-  // Accept either a single carrier object or a `carriers` array
+  // Accept either a `carriers` array or a single carrier object
   let rawCarriers: Record<string, unknown>[];
   if (Array.isArray(obj.carriers)) {
     rawCarriers = obj.carriers as Record<string, unknown>[];
@@ -113,7 +118,10 @@ export async function POST(req: Request) {
     rawCarriers = [obj];
   } else {
     return NextResponse.json(
-      { error: "Provide either a `carriers` array or a single carrier object with at least `brand`" },
+      {
+        error:
+          "Provide either a `carriers` array or a single carrier object with at least `brand`",
+      },
       { status: 400 },
     );
   }
@@ -123,20 +131,19 @@ export async function POST(req: Request) {
   }
 
   // Validate all rows first
-  const validated: { ok: true; carrier: CarrierInput }[] = [];
+  const validated: { index: number; carrier: CarrierInput }[] = [];
   const errors: string[] = [];
 
   rawCarriers.forEach((raw, i) => {
-    const rowNum = i + 1;
-    // Normalise CSV column names (snake_case) to our camelCase fields
+    // Normalise snake_case keys → camelCase
     const normalised: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(raw)) {
       const k = key.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
       normalised[k] = value;
     }
-    const result = validateCarrier(normalised, rowNum);
+    const result = validateCarrier(normalised, i + 1);
     if (result.ok) {
-      validated.push(result);
+      validated.push({ index: i + 1, carrier: result.carrier });
     } else {
       errors.push(result.error);
     }
@@ -146,73 +153,112 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Validation failed", details: errors }, { status: 422 });
   }
 
-  // Build rows for insertion
-  const now = new Date().toISOString();
-  const rows = validated.map(({ carrier }) => ({
+  // Build carrier ids
+  const withIds = validated.map(({ carrier }) => ({
     id: makeCarrierId(carrier.brand, carrier.model),
-    brand: carrier.brand,
-    model: carrier.model,
-    sku: carrier.sku,
-    length_cm: carrier.lengthCm,
-    width_cm: carrier.widthCm,
-    height_cm: carrier.heightCm,
-    weight_kg: carrier.weightKg,
-    max_pet_weight_kg: carrier.maxPetWeightKg,
-    soft_sided: carrier.softSided,
-    affiliate_url: carrier.affiliateUrl,
-    image_url: carrier.imageUrl,
-    affiliate_targets: carrier.affiliateNetwork
-      ? { [carrier.affiliateNetwork]: carrier.affiliateUrl }
-      : {},
-    verification: "not_verified_yet",
-    created_at: now,
+    carrier,
   }));
 
-  // Try Supabase; fall back to static logging
-  const supabase = getServiceSupabase();
-  if (supabase) {
-    const { error } = await supabase.from("carriers").insert(rows).select("id");
-    if (error) {
-      // Duplicate key — try inserting one by one so partial success is reported
-      if (error.code === "23505") {
-        const inserted: string[] = [];
-        const duplicateErrors: string[] = [];
-        for (const row of rows) {
-          const { error: insertErr } = await supabase.from("carriers").insert(row);
-          if (insertErr) {
-            if (insertErr.code === "23505") {
-              duplicateErrors.push(`${row.brand} ${row.model} (${row.id}): already exists`);
-            } else {
-              duplicateErrors.push(`${row.brand} ${row.model}: ${insertErr.message}`);
-            }
-          } else {
-            inserted.push(row.id);
-          }
-        }
-        return NextResponse.json({
-          imported: inserted.length,
-          inserted,
-          errors: duplicateErrors,
-          total: rows.length,
-        });
-      }
-      return NextResponse.json({ error: error.message }, { status: 500 });
+  const now = new Date().toISOString();
+  const supabase = getServiceSupabase() ?? getSupabase();
+
+  // --- Static mode: log & return ---
+  if (!supabase) {
+    for (const item of withIds) {
+      console.info(
+        "[flypewpet] carrier import (static):",
+        item.id,
+        item.carrier.brand,
+        item.carrier.model,
+      );
     }
     return NextResponse.json({
-      imported: rows.length,
-      inserted: rows.map((r) => r.id),
-      total: rows.length,
+      inserted: withIds.map((w) => w.id),
+      skipped: 0,
+      total: withIds.length,
+      note: "Static mode — carriers are logged only. Run with Supabase to persist.",
     });
   }
 
-  // Static mode — log and return
-  for (const row of rows) {
-    console.info("[flypewpet] carrier import (static):", row.brand, row.model, row.sku);
+  // --- Supabase mode: check existence & batch insert ---
+
+  // 1. Fetch all existing ids in one query
+  const allIds = withIds.map((w) => w.id);
+  const { data: existingRows } = await supabase
+    .from("carriers")
+    .select("id")
+    .in("id", allIds);
+
+  const existingSet = new Set((existingRows ?? []).map((r: { id: string }) => r.id));
+
+  // 2. Separate new vs skipped
+  const toInsert: {
+    id: string;
+    brand: string;
+    model: string;
+    sku: string;
+    length_cm: number;
+    width_cm: number;
+    height_cm: number;
+    weight_kg: number;
+    max_pet_weight_kg: number | null;
+    soft_sided: boolean;
+    affiliate_url: string | null;
+    image_url: string | null;
+    affiliate_targets: Record<string, string>;
+    verification: string;
+    created_at: string;
+  }[] = [];
+
+  const skipped: string[] = [];
+
+  for (const item of withIds) {
+    if (existingSet.has(item.id)) {
+      skipped.push(item.id);
+    } else {
+      toInsert.push({
+        id: item.id,
+        brand: item.carrier.brand,
+        model: item.carrier.model,
+        sku: item.carrier.sku,
+        length_cm: item.carrier.lengthCm,
+        width_cm: item.carrier.widthCm,
+        height_cm: item.carrier.heightCm,
+        weight_kg: item.carrier.weightKg,
+        max_pet_weight_kg: item.carrier.maxPetWeightKg ?? null,
+        soft_sided: item.carrier.softSided,
+        affiliate_url: item.carrier.affiliateUrl ?? null,
+        image_url: item.carrier.imageUrl ?? null,
+        affiliate_targets: item.carrier.affiliateNetwork
+          ? { [item.carrier.affiliateNetwork]: item.carrier.affiliateUrl ?? "" }
+          : {},
+        verification: "not_verified_yet",
+        created_at: now,
+      });
+    }
   }
+
+  // 3. Batch insert new rows
+  let insertErrors: string[] = [];
+  if (toInsert.length > 0) {
+    const { error: batchError } = await supabase.from("carriers").insert(toInsert);
+    if (batchError) {
+      // Fallback: try one by one for detailed error reporting
+      insertErrors = [];
+      for (const row of toInsert) {
+        const { error: err } = await supabase.from("carriers").insert(row);
+        if (err) {
+          insertErrors.push(`${row.brand} ${row.model} (${row.id}): ${err.message}`);
+        }
+      }
+    }
+  }
+
   return NextResponse.json({
-    imported: rows.length,
-    inserted: rows.map((r) => r.id),
-    total: rows.length,
-    note: "Static mode — carriers are logged only. Run with Supabase to persist.",
+    inserted: toInsert
+      .filter((_, i) => !insertErrors[i])
+      .map((r) => r.id),
+    skipped: skipped.length,
+    errors: insertErrors.length > 0 ? insertErrors : undefined,
   });
 }
