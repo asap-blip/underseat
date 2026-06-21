@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import type { Airline, Carrier, CabinType, PetSpecies } from "@/lib/data/types";
 import {
@@ -53,11 +53,21 @@ export function CheckForm({
   carriers,
   coverage,
   initialCarrierId,
+  initialAirlineId,
+  initialCabin,
+  initialPetWeight,
+  initialPetLength,
+  initialPetHeight,
 }: {
   airlines: Airline[];
   carriers: Carrier[];
   coverage: CoverageMap;
   initialCarrierId?: string;
+  initialAirlineId?: string;
+  initialCabin?: string;
+  initialPetWeight?: number;
+  initialPetLength?: number;
+  initialPetHeight?: number;
 }) {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
@@ -70,6 +80,32 @@ export function CheckForm({
   const [customH, setCustomH] = useState("");
   const [customSoft, setCustomSoft] = useState(true);
   const [customName, setCustomName] = useState("");
+
+  // Pre-fill from URL params on mount
+  useEffect(() => {
+    if (initialAirlineId) {
+      const idx = airlines.findIndex((a) => a.id === initialAirlineId);
+      if (idx >= 0) {
+        setValue(`legs.0.airlineId`, initialAirlineId);
+      }
+    }
+    if (initialCabin) {
+      setValue(`legs.0.cabin`, initialCabin as CabinType);
+    }
+    if (initialPetWeight != null) {
+      setValue("weightKg", initialPetWeight);
+    }
+    if (initialPetLength != null) {
+      setValue("petLengthCm", initialPetLength);
+    }
+    if (initialPetHeight != null) {
+      setValue("petHeightCm", initialPetHeight);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const preSelectedCarrier = initialCarrierId
+    ? carriers.find((c) => c.id === initialCarrierId)
+    : null;
 
   const [carrierSearch, setCarrierSearch] = useState("");
   const [carrierSuggestions, setCarrierSuggestions] = useState<Carrier[]>([]);
@@ -217,6 +253,13 @@ export function CheckForm({
         <span className="rounded-full bg-brand-100 px-2 py-0.5 font-medium text-caramel">Step 1 of 3</span>
         <span>~3 min to complete</span>
       </div>
+
+      {/* Pre-fill banner */}
+      {preSelectedCarrier && (
+        <div className="rounded-2xl bg-sky-50 px-4 py-3 text-sm text-sky-800 ring-1 ring-sky-200">
+          Checking <strong>{preSelectedCarrier.brand} {preSelectedCarrier.model}</strong> against your trip...
+        </div>
+      )}
       {/* Carrier */}
       <section className="soft-panel p-5">
         <h2 className="text-lg font-semibold text-slate-900">1. Your carrier</h2>
@@ -495,6 +538,7 @@ export function CheckForm({
                     <input className={input} placeholder="YYZ" maxLength={3} {...register(`legs.${i}.origin` as const, {
                       pattern: { value: /^[A-Za-z]{0,3}$/, message: "Airport codes are 3 letters" },
                     })} />
+                    <p className="mt-1 text-[10px] text-slate-400">Enter 3-letter IATA code (e.g. YYZ, LHR)</p>
                     {leg?.origin && leg.origin.trim().length > 0 && leg.origin.trim().length !== 3 && (
                       <p className="mt-1 text-[10px] text-amber-600">Airport codes are 3 letters (e.g. JFK).</p>
                     )}
@@ -504,6 +548,7 @@ export function CheckForm({
                     <input className={input} placeholder="LHR" maxLength={3} {...register(`legs.${i}.destination` as const, {
                       pattern: { value: /^[A-Za-z]{0,3}$/, message: "Airport codes are 3 letters" },
                     })} />
+                    <p className="mt-1 text-[10px] text-slate-400">Enter 3-letter IATA code (e.g. YYZ, LHR)</p>
                     {leg?.destination && leg.destination.trim().length > 0 && leg.destination.trim().length !== 3 && (
                       <p className="mt-1 text-[10px] text-amber-600">Airport codes are 3 letters (e.g. LHR).</p>
                     )}

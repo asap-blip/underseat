@@ -9,9 +9,9 @@ export const dynamic = "force-dynamic";
 export default async function CheckPage({
   searchParams,
 }: {
-  searchParams: Promise<{ carrier?: string }>;
+  searchParams: Promise<{ carrier?: string; airline?: string; cabin?: string; petWeight?: string; petLength?: string; petHeight?: string }>;
 }) {
-  const { carrier } = await searchParams;
+  const { carrier, airline, cabin, petWeight, petLength, petHeight } = await searchParams;
   const repo = getRepository();
   const [airlines, carriers, rules] = await Promise.all([
     repo.listAirlines(),
@@ -40,7 +40,17 @@ export default async function CheckPage({
           <Link href="/rules" className="text-brand-700 underline">See the supported-airlines list</Link>.
         </p>
       </div>
-      <CheckForm airlines={airlines} carriers={carriers} coverage={coverage} initialCarrierId={carrier} />
+      <CheckForm
+        airlines={airlines}
+        carriers={carriers}
+        coverage={coverage}
+        initialCarrierId={carrier}
+        initialAirlineId={airline}
+        initialCabin={cabin}
+        initialPetWeight={petWeight ? Number(petWeight) : undefined}
+        initialPetLength={petLength ? Number(petLength) : undefined}
+        initialPetHeight={petHeight ? Number(petHeight) : undefined}
+      />
     </div>
   );
 }
