@@ -4,30 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import type { Carrier } from "@/lib/data/types";
 import { trackedClickUrl } from "@/lib/affiliate";
-
-const verificationBadge: Record<string, { label: string; cls: string }> = {
-  team_verified: { label: "✓ Checked by us", cls: "text-emerald-600" },
-  traveler_reported: { label: "✈ Traveler reported", cls: "text-amber-600" },
-  needs_review: { label: "⏳ Needs review", cls: "text-orange-600" },
-  failed_check: { label: "⚠ Failed check", cls: "text-rose-600" },
-};
-
-function VerificationBadge({ status }: { status: string }) {
-  const badge = verificationBadge[status];
-  if (!badge) {
-    return (
-      <span className="shrink-0 text-[11px] font-medium text-slate-400">🕒 Awaiting review</span>
-    );
-  }
-  if (status === "needs_review") {
-    return (
-      <span className="shrink-0 text-[11px] font-medium text-orange-600">⏳ Needs verification</span>
-    );
-  }
-  return (
-    <span className={`shrink-0 text-[11px] font-medium ${badge.cls}`}>{badge.label}</span>
-  );
-}
+import { TrustChecklist } from "./carrier/TrustChecklist";
 
 function initials(brand: string) {
   return brand
@@ -107,7 +84,7 @@ export function CarrierCard({
             </div>
             <h3 className="mt-1.5 text-base font-extrabold leading-snug text-navy">{carrier.model}</h3>
           </div>
-          <VerificationBadge status={carrier.verification} />
+          <TrustChecklist carrier={carrier} />
         </div>
 
         {carrier.description && (
