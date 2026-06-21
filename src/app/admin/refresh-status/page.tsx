@@ -1,11 +1,9 @@
-import { getServiceSupabase } from "@/lib/supabase/client";
-import { getRepository } from "@/lib/data/repository";
-import { dataSourceLabel } from "@/lib/data/repository";
+import { getRepository, dataSourceLabel } from "@/lib/data/repository";
 
 export const dynamic = "force-dynamic";
 
 export default async function RefreshStatusPage() {
-  const { rules, stale, staleCount } = await getStaleRules();
+  const { stale, staleCount } = await getStaleRules();
 
   return (
     <div className="space-y-6">
@@ -91,7 +89,6 @@ async function getStaleRules(): Promise<{ rules: StaleRuleRow[]; stale: StaleRul
   const airlineMap = new Map(allAirlines.map((a) => [a.id, a.name]));
 
   const now = Date.now();
-  const cutoffMs = 180 * 24 * 60 * 60 * 1000;
 
   const rules = allRules.map((r) => {
     const daysAgo = r.lastVerifiedAt

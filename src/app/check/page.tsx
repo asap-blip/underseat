@@ -3,7 +3,6 @@ import { CheckForm } from "@/components/CheckForm";
 import { getRepository } from "@/lib/data/repository";
 import { buildCoverageMap } from "@/lib/coverage";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import type { AirlineRule } from "@/lib/data/types";
 
 export const dynamic = "force-dynamic";
 
