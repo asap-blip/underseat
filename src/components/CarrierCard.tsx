@@ -16,7 +16,12 @@ function VerificationBadge({ status }: { status: string }) {
   const badge = verificationBadge[status];
   if (!badge) {
     return (
-      <span className="shrink-0 text-[11px] font-medium text-slate-400">? Not yet verified</span>
+      <span className="shrink-0 text-[11px] font-medium text-slate-400">🕒 Awaiting review</span>
+    );
+  }
+  if (status === "needs_review") {
+    return (
+      <span className="shrink-0 text-[11px] font-medium text-orange-600">⏳ Needs verification</span>
     );
   }
   return (

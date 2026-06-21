@@ -33,12 +33,9 @@ interface FormValues {
   legs: LegField[];
 }
 
-const SPECIES: { value: PetSpecies; label: string }[] = [
+const SPECIES = [
   { value: "dog", label: "Dog" },
   { value: "cat", label: "Cat" },
-  { value: "rabbit", label: "Rabbit" },
-  { value: "bird", label: "Bird" },
-  { value: "other", label: "Other" },
 ];
 
 const input = "soft-input";
