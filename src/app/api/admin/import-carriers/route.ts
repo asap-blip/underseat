@@ -171,7 +171,7 @@ export async function POST(req: Request) {
   // Try Supabase; fall back to static logging
   const supabase = getServiceSupabase();
   if (supabase) {
-    const { error, count } = await supabase.from("carriers").insert(rows).select("id");
+    const { error } = await supabase.from("carriers").insert(rows).select("id");
     if (error) {
       // Duplicate key — try inserting one by one so partial success is reported
       if (error.code === "23505") {
