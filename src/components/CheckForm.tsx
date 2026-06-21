@@ -84,7 +84,6 @@ export function CheckForm({
     },
   });
   const { fields, append, remove } = useFieldArray({ control, name: "legs" });
-  const selectedCarrierId = watch("carrierId");
   const legs = watch("legs");
 
   const airlineName = (id?: string) => airlines.find((a) => a.id === id)?.name ?? id ?? "";
