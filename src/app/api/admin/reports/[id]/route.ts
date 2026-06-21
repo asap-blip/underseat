@@ -1,48 +1,74 @@
 import { NextResponse } from "next/server";
-import { moderationSchema } from "@/lib/validation/schemas";
-import { getRepository } from "@/lib/data/repository";
+import { getServiceSupabase } from "@/lib/supabase/client";
 
-export const runtime = "nodejs";
-
-// When ADMIN_TOKEN is set, admin writes require a matching x-admin-token header.
-// When unset (local dev), writes are allowed. Set it in any shared/prod deploy.
-function authorized(req: Request): boolean {
-  const expected = process.env.ADMIN_TOKEN;
-  if (!expected) return true;
-  return req.headers.get("x-admin-token") === expected;
-}
-
-// PATCH /api/admin/reports/[id] — moderate a traveler report and re-aggregate
-// the affected carrier-airline verification.
-export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
-  if (!authorized(req)) {
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  // Simple admin auth via header
+  const adminToken = process.env.ADMIN_TOKEN;
+  if (adminToken && req.headers.get("x-admin-token") !== adminToken) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const { id } = await ctx.params;
-
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
-
-  const parsed = moderationSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Validation failed", issues: parsed.error.flatten() },
-      { status: 422 },
-    );
-  }
 
   try {
-    const report = await getRepository().moderateReport(id, parsed.data.moderationStatus);
-    if (!report) {
-      return NextResponse.json({ error: "Report not found (or no database configured)" }, { status: 404 });
+    const { id } = await params;
+    const { action } = await req.json();
+
+    if (!action || !["approve", "reject"].includes(action)) {
+      return NextResponse.json({ error: "action must be 'approve' or 'reject'" }, { status: 400 });
     }
-    return NextResponse.json({ report });
+
+    const supabase = getServiceSupabase();
+    if (!supabase) {
+      return NextResponse.json({ error: "Database not configured" }, { status: 503 });
+    }
+
+    // Fetch the report
+    const { data: report, error: fetchError } = await supabase
+      .from("carrier_reports")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (fetchError || !report) {
+      return NextResponse.json({ error: "Report not found" }, { status: 404 });
+    }
+
+    const now = new Date().toISOString();
+
+    if (action === "reject") {
+      const { error } = await supabase
+        .from("carrier_reports")
+        .update({ status: "rejected", reviewed_at: now })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      return NextResponse.json({ ok: true, status: "rejected" });
+    }
+
+    // Approve: update report + carrier
+    const { error: updateError } = await supabase
+      .from("carrier_reports")
+      .update({ status: "approved", reviewed_at: now })
+      .eq("id", id);
+
+    if (updateError) throw updateError;
+
+    const { error: carrierError } = await supabase
+      .from("carriers")
+      .update({
+        verification: "team_verified",
+        verified_at: now.split("T")[0],
+      })
+      .eq("id", report.carrier_id);
+
+    if (carrierError) throw carrierError;
+
+    return NextResponse.json({ ok: true, status: "approved" });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Moderation failed";
-    return NextResponse.json({ error: message }, { status: 400 });
+    console.error("Admin reports error:", err);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

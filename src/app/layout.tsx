@@ -55,6 +55,9 @@ export default function RootLayout({
               Some links on this site are affiliate links. As an Amazon Associate we may earn
               from qualifying purchases. This never affects which carriers we recommend.
             </p>
+            <p className="pt-2">
+              <a href="/admin/reports" className="text-slate-400 hover:text-slate-600 transition-colors">Admin</a>
+            </p>
           </div>
         </footer>
       </body>
