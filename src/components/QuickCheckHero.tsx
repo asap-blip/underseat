@@ -14,6 +14,7 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
   const [widthCm, setWidthCm] = useState("");
   const [heightCm, setHeightCm] = useState("");
   const [petWeightKg, setPetWeightKg] = useState("");
+  const [softSided, setSoftSided] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,7 +37,7 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
     setError(null);
 
     const payload = {
-      carrierDimensions: { lengthCm: l, widthCm: w, heightCm: h, softSided: true },
+      carrierDimensions: { lengthCm: l, widthCm: w, heightCm: h, softSided },
       pet: {
         species: "dog" as const,
         weightKg: petWeightKg ? Number(petWeightKg) : 5,
@@ -147,6 +148,40 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
         </div>
       </div>
 
+      {/* Soft-sided / Hard-sided toggle */}
+      <div className="mt-3 flex items-center gap-3">
+        <span className="text-xs font-medium text-slate-600">Carrier type:</span>
+        <div className="flex rounded-lg border border-slate-300 bg-white p-0.5">
+          <button
+            type="button"
+            onClick={() => setSoftSided(true)}
+            className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
+              softSided
+                ? "bg-brand-600 text-white shadow-sm"
+                : "text-slate-500 hover:text-slate-700"
+            }`}
+          >
+            Soft-sided
+          </button>
+          <button
+            type="button"
+            onClick={() => setSoftSided(false)}
+            className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
+              !softSided
+                ? "bg-brand-600 text-white shadow-sm"
+                : "text-slate-500 hover:text-slate-700"
+            }`}
+          >
+            Hard-sided
+          </button>
+        </div>
+        {!softSided && (
+          <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-700">
+            Fewer airline fits
+          </span>
+        )}
+      </div>
+
       {/* Pet weight + CTA row */}
       <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
         <div className="w-full sm:w-44">
@@ -180,7 +215,7 @@ export function QuickCheckHero({ airlines }: { airlines: Airline[] }) {
 
       {/* Hint */}
       <p className="mt-2 text-xs text-slate-500">
-        Carrier assumed soft-sided. For hard-sided or multi-leg trips, use the{" "}
+        For multi-leg trips or a specific product code, use the{" "}
         <a href="/check" className="font-medium text-brand-700 underline">full trip check</a>.
       </p>
 

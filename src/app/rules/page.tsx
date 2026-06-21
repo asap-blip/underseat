@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getRepository } from "@/lib/data/repository";
 import { SourceCitation } from "@/components/SourceCitation";
 import { SupportedAirlines, buildCoverage } from "@/components/SupportedAirlines";
@@ -73,61 +74,113 @@ export default async function RulesPage() {
       </section>
 
       <h2 className="pt-2 text-lg font-semibold text-slate-900">Full rule details</h2>
-      <div className="space-y-6">
+
+      {/* Airline index cards */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {byAirline.map(({ airline, rules }) => (
-          <section key={airline.id} className="rounded-2xl border border-slate-200 bg-white p-5">
-            <div className="flex items-baseline justify-between">
-              <h2 className="text-lg font-semibold text-slate-900">{airline.name}</h2>
+          <Link
+            key={airline.id}
+            href={`/rules/${airline.id}`}
+            className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-brand-300 hover:shadow-sm"
+          >
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-slate-900">{airline.name}</h3>
               <span className="text-xs font-mono text-slate-400">{airline.iata}</span>
             </div>
-            <div className="mt-4 space-y-4">
+            <div className="mt-2 flex flex-wrap gap-1">
               {rules.map((r) => (
-                <div key={r.id} className="rounded-xl border border-slate-200 p-4">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700">
-                      {cabinLabel[r.cabin] ?? r.cabin}
-                    </span>
-                    {r.aircraftType && (
-                      <span className="text-xs text-slate-500">Aircraft: {r.aircraftType}</span>
-                    )}
-                    {r.aircraftVaries && (
-                      <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-700">
-                        Under-seat space varies by aircraft
-                      </span>
-                    )}
-                  </div>
-
-                  <dl className="mt-3 grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
-                    <div className="flex justify-between sm:block">
-                      <dt className="text-slate-500">Max carrier size</dt>
-                      <dd className="text-slate-900">{dims(r.maxLengthCm, r.maxWidthCm, r.maxHeightCm)}</dd>
-                    </div>
-                    <div className="flex justify-between sm:block">
-                      <dt className="text-slate-500">Max pet + carrier weight</dt>
-                      <dd className="text-slate-900">
-                        {r.maxCombinedWeightKg != null ? `${r.maxCombinedWeightKg} kg` : "Not published"}
-                      </dd>
-                    </div>
-                    <div className="flex justify-between sm:block">
-                      <dt className="text-slate-500">Soft-sided</dt>
-                      <dd className="text-slate-900 capitalize">{r.softSidedRequirement ?? "Either allowed"}</dd>
-                    </div>
-                  </dl>
-
-                  {r.notes && <p className="mt-3 text-sm text-slate-600">{r.notes}</p>}
-
-                  <div className="mt-3 border-t border-slate-100 pt-3">
-                    <SourceCitation
-                      sourceUrl={r.sourceUrl}
-                      sourceLabel={r.sourceLabel}
-                      sourceType={r.sourceType}
-                      lastVerifiedAt={r.lastVerifiedAt}
-                    />
-                  </div>
-                </div>
+                <span
+                  key={r.id}
+                  className="rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-medium text-brand-700"
+                >
+                  {cabinLabel[r.cabin] ?? r.cabin}
+                </span>
               ))}
             </div>
-          </section>
+            <div className="mt-2 text-xs text-slate-500">
+              {rules.length} rule{rules.length === 1 ? "" : "s"}
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {/* Collapsible accordion with per-airline details */}
+      <div className="space-y-3">
+        {byAirline.map(({ airline, rules }) => (
+          <details
+            key={airline.id}
+            className="group rounded-2xl border border-slate-200 bg-white [&[open]]:shadow-sm"
+          >
+            <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4">
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-semibold text-slate-900">{airline.name}</span>
+                <span className="text-xs font-mono text-slate-400">{airline.iata}</span>
+                <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-medium text-brand-700">
+                  {rules.length} rule{rules.length === 1 ? "" : "s"}
+                </span>
+              </div>
+              <span className="text-caramel transition group-open:rotate-90" aria-hidden="true">
+                ›
+              </span>
+            </summary>
+
+            <div className="border-t border-slate-100 px-5 pb-5 pt-4">
+              <Link
+                href={`/rules/${airline.id}`}
+                className="mb-3 inline-flex text-xs font-medium text-brand-700 hover:underline"
+              >
+                View {airline.name} rule page →
+              </Link>
+              <div className="space-y-3">
+                {rules.map((r) => (
+                  <div key={r.id} className="rounded-xl border border-slate-100 bg-slate-50/70 p-4">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700">
+                        {cabinLabel[r.cabin] ?? r.cabin}
+                      </span>
+                      {r.aircraftType && (
+                        <span className="text-xs text-slate-500">Aircraft: {r.aircraftType}</span>
+                      )}
+                      {r.aircraftVaries && (
+                        <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-700">
+                          Under-seat space varies by aircraft
+                        </span>
+                      )}
+                    </div>
+
+                    <dl className="mt-2 grid gap-x-6 gap-y-1 text-xs sm:grid-cols-2">
+                      <div className="flex justify-between sm:block">
+                        <dt className="text-slate-500">Max size</dt>
+                        <dd className="text-slate-900">{dims(r.maxLengthCm, r.maxWidthCm, r.maxHeightCm)}</dd>
+                      </div>
+                      <div className="flex justify-between sm:block">
+                        <dt className="text-slate-500">Max weight</dt>
+                        <dd className="text-slate-900">
+                          {r.maxCombinedWeightKg != null ? `${r.maxCombinedWeightKg} kg` : "Not published"}
+                        </dd>
+                      </div>
+                      <div className="flex justify-between sm:block">
+                        <dt className="text-slate-500">Soft-sided</dt>
+                        <dd className="text-slate-900 capitalize">{r.softSidedRequirement ?? "Either allowed"}</dd>
+                      </div>
+                    </dl>
+
+                    {r.notes && <p className="mt-2 text-xs text-slate-600">{r.notes}</p>}
+
+                    <div className="mt-2">
+                      <SourceCitation
+                        sourceUrl={r.sourceUrl}
+                        sourceLabel={r.sourceLabel}
+                        sourceType={r.sourceType}
+                        lastVerifiedAt={r.lastVerifiedAt}
+                        compact
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </details>
         ))}
       </div>
     </div>

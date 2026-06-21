@@ -1,13 +1,16 @@
 import Link from "next/link";
+import { trackedClickUrl } from "@/lib/affiliate";
 import type { AlternativeSuggestion } from "@/lib/check/service";
 import { CarrierCard } from "./CarrierCard";
 
 export function AlternativesPanel({
   alternatives,
   heading,
+  urgent = false,
 }: {
   alternatives: AlternativeSuggestion[];
   heading: string;
+  urgent?: boolean;
 }) {
   if (alternatives.length === 0) {
     return (
@@ -17,6 +20,17 @@ export function AlternativesPanel({
           No carriers in our carrier list clear every leg of your itinerary. That does not mean one does
           not exist. We just have not verified it yet.
         </p>
+        <div className="mt-4 rounded-2xl border-2 border-amber-300 bg-amber-50 p-5">
+          <h3 className="text-sm font-bold text-amber-900">Don&apos;t see a fit? Need help choosing?</h3>
+          <p className="mt-1 text-xs text-amber-800">
+            Let us know what you&apos;re looking for and we can help find the right carrier.
+          </p>
+          <div className="mt-3 flex gap-3">
+            <Link href="/carriers" className="secondary-cta px-4 py-2 text-sm">
+              Browse all carriers
+            </Link>
+          </div>
+        </div>
         <Link href="/carriers" className="secondary-cta mt-3 px-4 py-2 text-sm">
           <span aria-hidden="true">+</span>
           Suggest
@@ -40,6 +54,16 @@ export function AlternativesPanel({
                 </div>
               ))}
             </div>
+            {urgent && (
+              <a
+                href={trackedClickUrl(alt.carrier.id)}
+                rel="nofollow sponsored noopener"
+                target="_blank"
+                className="primary-cta mt-3 w-full px-4 py-2.5 text-center text-sm font-bold"
+              >
+                Buy Now
+              </a>
+            )}
           </div>
         ))}
       </div>

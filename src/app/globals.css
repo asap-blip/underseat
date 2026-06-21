@@ -88,6 +88,7 @@ body {
   border-radius: 999px;
   background: var(--color-navy);
   padding: 0.75rem 1.1rem;
+  min-height: 44px;
   color: white;
   font-size: 0.9rem;
   font-weight: 800;
@@ -110,6 +111,7 @@ body {
   border-radius: 999px;
   background: rgba(255, 250, 241, 0.9);
   padding: 0.75rem 1.1rem;
+  min-height: 44px;
   color: var(--color-caramel);
   font-size: 0.9rem;
   font-weight: 800;
@@ -176,6 +178,7 @@ body {
   gap: 0.35rem;
   border-radius: 999px;
   padding: 0.45rem 0.65rem;
+  min-height: 44px;
   transition: background 160ms ease, color 160ms ease;
 }
 

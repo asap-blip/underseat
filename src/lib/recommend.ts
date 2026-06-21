@@ -8,6 +8,7 @@ import type { Carrier } from "@/lib/data/types";
 export type FitBand = "good" | "snug" | "unlikely";
 
 export interface PetInput {
+  species?: string | null;
   weightKg: number;
   lengthCm?: number | null; // nose to base of tail
   heightCm?: number | null; // floor to shoulder/top of head when standing

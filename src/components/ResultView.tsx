@@ -8,6 +8,7 @@ import { ShareLink } from "./ShareLink";
 import { SourceCitation } from "./SourceCitation";
 import { CarrierStatus } from "./CarrierStatus";
 import { VerdictHelp } from "./Help";
+import { TravelEssentials } from "./TravelEssentials";
 import { TripFollowupForm } from "./TripFollowupForm";
 import { SaveCheckForm } from "./SaveCheckForm";
 import { verdictHeadline } from "@/lib/ui";
@@ -157,7 +158,11 @@ export function ResultView({
       <AlternativesPanel
         alternatives={alternatives}
         heading={result.overall === "PASS" ? "Other carriers that also fit" : "Better-fit alternatives"}
+        urgent={result.overall !== "PASS"}
       />
+
+      {/* Travel Essentials */}
+      <TravelEssentials />
 
       <SaveCheckForm
         shareToken={shareToken}

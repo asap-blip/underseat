@@ -1,6 +1,7 @@
 import { ReverseSearch } from "@/components/ReverseSearch";
 import { SuggestCarrier } from "@/components/SuggestCarrier";
 import { getRepository } from "@/lib/data/repository";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +21,41 @@ export default async function FindPage() {
           are recommendations, not an exhaustive list.
         </p>
       </div>
+
       <ReverseSearch carriers={carriers} />
+
+      {/* Example result preview */}
+      <section className="soft-panel-muted p-5">
+        <h2 className="text-sm font-semibold text-slate-800">See what you get</h2>
+        <div className="mt-3 rounded-2xl border border-brand-200 bg-white/90 p-4">
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <span className="text-xs font-medium text-slate-500">Example: 5 kg Dog</span>
+              <div className="mt-1 space-y-1.5 text-sm text-slate-700">
+                <div className="flex items-center gap-2">
+                  <span className="text-emerald-500">✓</span>
+                  <span><strong>Sherpa</strong> Original Deluxe (Medium) — Likely fits</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-emerald-500">✓</span>
+                  <span><strong>Sleepypod</strong> Atom In-Cabin — Likely fits</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-amber-500">∼</span>
+                  <span><strong>SturdiBag</strong> Small — Snug fit</span>
+                </div>
+              </div>
+            </div>
+            <Link href="/check?carrier=sherpa-original-md" className="primary-cta shrink-0 px-3 py-1.5 text-xs">
+              Try it
+            </Link>
+          </div>
+          <p className="mt-3 text-[10px] text-slate-400">
+            Enter your pet&apos;s actual weight above to see real recommendations.
+          </p>
+        </div>
+      </section>
+
       <SuggestCarrier />
     </div>
   );

@@ -16,7 +16,13 @@ const fitStyle: Record<FitBand, { label: string; cls: string }> = {
   unlikely: { label: "Probably too small", cls: "bg-rose-50 text-rose-700 ring-rose-200" },
 };
 
+const SPECIES_OPTIONS = [
+  { value: "dog", label: "Dog" },
+  { value: "cat", label: "Cat" },
+];
+
 export function ReverseSearch({ carriers }: { carriers: Carrier[] }) {
+  const [species, setSpecies] = useState("dog");
   const [weightKg, setWeightKg] = useState("");
   const [lengthCm, setLengthCm] = useState("");
   const [heightCm, setHeightCm] = useState("");
@@ -31,6 +37,7 @@ export function ReverseSearch({ carriers }: { carriers: Carrier[] }) {
     }
     const recs = recommendCarriers(
       {
+        species: species as "dog" | "cat",
         weightKg: w,
         lengthCm: lengthCm ? Number(lengthCm) : null,
         heightCm: heightCm ? Number(heightCm) : null,
@@ -50,7 +57,15 @@ export function ReverseSearch({ carriers }: { carriers: Carrier[] }) {
         <p className="mt-1 text-sm text-slate-600">
           Weight is required. Measurements are optional, but they make the match more accurate.
         </p>
-        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        <div className="mt-4 grid gap-4 sm:grid-cols-4">
+          <div>
+            <label className={label}>Species</label>
+            <select className={input} value={species} onChange={(e) => setSpecies(e.target.value)}>
+              {SPECIES_OPTIONS.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+          </div>
           <div>
             <label className={label}>Weight (kg)</label>
             <input type="number" step="0.1" min="0.1" className={input} value={weightKg} onChange={(e) => setWeightKg(e.target.value)} required />
@@ -139,18 +154,20 @@ function RecommendationCard({ rec }: { rec: CarrierRecommendation }) {
       </ul>
       <div className="mt-4 grid grid-cols-2 gap-2">
         <Link href={`/check?carrier=${carrier.id}`} className="primary-cta px-3 py-1.5 text-sm">
-          <span aria-hidden="true">⌕</span>
-          Check
+          <span aria-hidden="true">☞</span>
+          Check this against my trip
         </Link>
-        <Link
+        <a
           href={trackedClickUrl(carrier.id)}
           rel="nofollow sponsored noopener"
           target="_blank"
           className="secondary-cta px-3 py-1.5 text-sm"
+          data-click="affiliate-shop"
+          data-carrier={carrier.id}
         >
           <span aria-hidden="true">↗</span>
           Shop
-        </Link>
+        </a>
       </div>
     </div>
   );

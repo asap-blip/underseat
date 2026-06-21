@@ -67,6 +67,8 @@ export function CarrierCard({
           <span>{money(carrier.priceUsd)}</span>
         </div>
 
+        <p className="mt-2 text-[10px] text-slate-400">Price &amp; stock may vary</p>
+
         <div className="mt-5 grid grid-cols-[1.08fr_0.92fr] gap-1 rounded-2xl bg-brand-50 p-1 ring-1 ring-brand-100">
           <Link
             href={checkHref}
@@ -82,6 +84,8 @@ export function CarrierCard({
             target="_blank"
             className="secondary-cta min-h-10 px-3 py-2 text-sm"
             title="Affiliate link. We may earn a commission."
+            data-click="affiliate-shop"
+            data-carrier={carrier.id}
           >
             <span className="cta-icon" aria-hidden="true">↗</span>
             Shop

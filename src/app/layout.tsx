@@ -15,15 +15,6 @@ export const metadata: Metadata = {
     "Check whether a specific pet carrier meets the in-cabin rules for your exact flight itinerary. Leg by leg, with clear reasons.",
 };
 
-function HeaderCheckCta({ className = "" }: { className?: string }) {
-  return (
-    <Link href="/check" className={`primary-cta px-4 py-2 text-sm ${className}`}>
-      <span className="cta-icon" aria-hidden="true">⌕</span>
-      Check
-    </Link>
-  );
-}
-
 export default function RootLayout({
   children,
 }: {
@@ -39,11 +30,11 @@ export default function RootLayout({
               <span>Underseat</span>
             </Link>
             <nav className="flex items-center gap-1 text-sm text-slate-600">
+              <Link href="/check" className="hidden md:inline-flex nav-link">Check</Link>
               <Link href="/find" className="hidden md:inline-flex nav-link">Find</Link>
-              <Link href="/carriers" className="hidden md:inline-flex nav-link">Shop</Link>
-              <Link href="/rules" className="hidden md:inline-flex nav-link">Pet rules</Link>
-              <HeaderCheckCta className="hidden md:inline-flex" />
-              <Link href="/check" className="inline-flex md:hidden nav-link">
+              <Link href="/carriers" className="hidden md:inline-flex nav-link">Carriers</Link>
+              <Link href="/rules" className="hidden md:inline-flex nav-link">Rules</Link>
+              <Link href="/check" className="inline-flex md:hidden primary-cta px-3 py-1.5 text-xs">
                 <span className="cta-icon" aria-hidden="true">⌕</span>
                 Check
               </Link>

@@ -71,6 +71,10 @@ export function CheckForm({
   const [customSoft, setCustomSoft] = useState(true);
   const [customName, setCustomName] = useState("");
 
+  const [carrierSearch, setCarrierSearch] = useState("");
+  const [carrierSuggestions, setCarrierSuggestions] = useState<Carrier[]>([]);
+  const [carrierFocus, setCarrierFocus] = useState(false);
+
   const { register, control, handleSubmit, setValue, watch } = useForm<FormValues>({
     defaultValues: {
       carrierId: initialCarrierId ?? carriers[0]?.id ?? "",
@@ -301,13 +305,59 @@ export function CheckForm({
           </div>
         ) : (
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className={label}>Select a carrier</label>
-              <select className={input} {...register("carrierId")}>
+            <div className="relative">
+              <label className={label}>Search a carrier</label>
+              <input
+                className={input}
+                placeholder="Type to search… e.g. Amazon Basics"
+                value={carrierSearch}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setCarrierSearch(v);
+                  if (v.trim().length > 0) {
+                    const q = v.toLowerCase();
+                    setCarrierSuggestions(
+                      carriers.filter(
+                        (c) =>
+                          c.brand.toLowerCase().includes(q) ||
+                          c.model.toLowerCase().includes(q) ||
+                          c.id.toLowerCase().includes(q),
+                      ),
+                    );
+                  } else {
+                    setCarrierSuggestions([]);
+                  }
+                }}
+                onFocus={() => setCarrierFocus(true)}
+                onBlur={() => setTimeout(() => setCarrierFocus(false), 200)}
+              />
+              {carrierFocus && carrierSuggestions.length > 0 && (
+                <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-60 overflow-auto rounded-xl border border-slate-200 bg-white shadow-lg">
+                  {carrierSuggestions.map((c) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      className="flex w-full items-center justify-between px-4 py-2.5 text-left text-sm hover:bg-brand-50"
+                      onMouseDown={() => {
+                        setValue("carrierId", c.id, { shouldDirty: true });
+                        setCarrierSearch(`${c.brand} ${c.model}`);
+                        setCarrierSuggestions([]);
+                      }}
+                    >
+                      <span>
+                        <span className="font-medium text-slate-800">{c.brand}</span>{" "}
+                        <span className="text-slate-500">{c.model}</span>
+                      </span>
+                      <span className="text-xs text-slate-400">
+                        {c.lengthCm}×{c.widthCm}×{c.heightCm} cm
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              <select className="sr-only" {...register("carrierId")} aria-hidden="true" tabIndex={-1}>
                 {carriers.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.brand} {c.model} · {c.lengthCm}×{c.widthCm}×{c.heightCm} cm
-                  </option>
+                  <option key={c.id} value={c.id} />
                 ))}
               </select>
             </div>
@@ -333,15 +383,6 @@ export function CheckForm({
             </div>
           </div>
         )}
-        {selectedCarrierId && !customMode && (
-          <p className="mt-2 text-xs text-slate-400">
-            Selected:{" "}
-            {(() => {
-              const c = carriers.find((x) => x.id === selectedCarrierId);
-              return c ? `${c.brand} ${c.model} (${c.softSided ? "soft" : "hard"}-sided)` : selectedCarrierId;
-            })()}
-          </p>
-        )}
         {customMode && (
           <p className="mt-2 text-xs text-slate-400">
             Enter your carrier&apos;s external dimensions. We&apos;ll check them against the airline&apos;s rules.
@@ -366,17 +407,20 @@ export function CheckForm({
             <input type="number" step="0.1" min="0.1" className={input} {...register("weightKg", { valueAsNumber: true })} />
           </div>
           <div>
-            <label className={label}>Length <span className="font-normal text-slate-400">(cm · nose to base of tail)</span></label>
-            <input type="number" step="0.5" className={input} {...register("petLengthCm", { valueAsNumber: true })} />
+            <label className={label}>
+              Length (cm) <span className="font-normal text-amber-600">required</span>
+            </label>
+            <input type="number" step="0.5" className={input} {...register("petLengthCm", { valueAsNumber: true, required: true })} />
+            <p className="mt-1 text-[10px] text-slate-400">Nose to base of tail. We need this for accurate fit.</p>
           </div>
           <div>
-            <label className={label}>Standing height <span className="font-normal text-slate-400">(cm · floor to head/ears)</span></label>
-            <input type="number" step="0.5" className={input} {...register("petHeightCm", { valueAsNumber: true })} />
+            <label className={label}>
+              Standing height (cm) <span className="font-normal text-amber-600">required</span>
+            </label>
+            <input type="number" step="0.5" className={input} {...register("petHeightCm", { valueAsNumber: true, required: true })} />
+            <p className="mt-1 text-[10px] text-slate-400">Floor to head/ears while standing. Helps gauge comfort.</p>
           </div>
         </div>
-        <p className="mt-2 text-xs text-slate-400">
-          Measurements are optional but let us flag comfort risk (room to stand and turn).
-        </p>
         <PetMeasureHelp />
       </section>
 
@@ -444,11 +488,21 @@ export function CheckForm({
                   </div>
                   <div>
                     <label className={label}>From</label>
-                    <input className={input} placeholder="YYZ" {...register(`legs.${i}.origin` as const)} />
+                    <input className={input} placeholder="YYZ" maxLength={3} {...register(`legs.${i}.origin` as const, {
+                      pattern: { value: /^[A-Za-z]{0,3}$/, message: "Airport codes are 3 letters" },
+                    })} />
+                    {leg?.origin && leg.origin.trim().length > 0 && leg.origin.trim().length !== 3 && (
+                      <p className="mt-1 text-[10px] text-amber-600">Airport codes are 3 letters (e.g. JFK).</p>
+                    )}
                   </div>
                   <div>
                     <label className={label}>To</label>
-                    <input className={input} placeholder="LHR" {...register(`legs.${i}.destination` as const)} />
+                    <input className={input} placeholder="LHR" maxLength={3} {...register(`legs.${i}.destination` as const, {
+                      pattern: { value: /^[A-Za-z]{0,3}$/, message: "Airport codes are 3 letters" },
+                    })} />
+                    {leg?.destination && leg.destination.trim().length > 0 && leg.destination.trim().length !== 3 && (
+                      <p className="mt-1 text-[10px] text-amber-600">Airport codes are 3 letters (e.g. LHR).</p>
+                    )}
                   </div>
                   <div>
                     <label className={label}>Cabin</label>
@@ -485,10 +539,10 @@ export function CheckForm({
                     <label className={label}>Operated by (optional)</label>
                     <select className={input} {...register(`legs.${i}.operatingCarrierId` as const)}>
                       <option value="">Same as airline</option>
+                      <option value={UNKNOWN_OPERATING}>Another airline, not listed or unknown</option>
                       {airlines.map((a) => (
                         <option key={a.id} value={a.id}>{a.name}</option>
                       ))}
-                      <option value={UNKNOWN_OPERATING}>Another airline, not listed or unknown</option>
                     </select>
                   </div>
                 </div>
