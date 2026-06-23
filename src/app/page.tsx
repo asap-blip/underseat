@@ -102,6 +102,12 @@ export default async function HomePage() {
               Check a real itinerary before you book. Underseat compares your carrier against airline and
               cabin rules, then gives you Pass, Tight fit, or No with clear reasons.
             </p>
+            <p className="mt-3 max-w-2xl text-left text-sm leading-7 text-slate-500">
+              Airline pet carrier rules are scattered across different websites, buried in PDFs, and
+              measured differently by each airline. Some include wheels, some don&apos;t. Underseat checks
+              your carrier against all of them in one place. No PDF hunting. No inch to centimeter math.
+              Just a clear yes or no.
+            </p>
 
             <div className="mt-4 flex flex-col gap-3 sm:flex-row">
               <Link href="/check" className="primary-cta px-6 py-3 text-base">
