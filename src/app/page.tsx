@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { QuickCheckHero } from "@/components/QuickCheckHero";
 import { getRepository } from "@/lib/data/repository";
-import { CarrierCard } from "@/components/CarrierCard";
+import { getSupabase, isSupabaseConfigured } from "@/lib/supabase/client";
+import { CompactCarrierCard } from "@/components/CompactCarrierCard";
+import { StatsBar } from "@/components/StatsBar";
 import type { Carrier } from "@/lib/data/types";
 
 export const dynamic = "force-dynamic";
@@ -68,6 +70,18 @@ export default async function HomePage() {
   const repo = getRepository();
   const [airlines, carriers] = await Promise.all([repo.listAirlines(), repo.listCarriers()]);
   const recommended = pickRecommended(carriers);
+
+  // Count reports from Supabase if configured, otherwise fall back to static count.
+  let reportCount = 0;
+  if (isSupabaseConfigured()) {
+    const sb = getSupabase();
+    if (sb) {
+      const { count } = await sb
+        .from("carrier_reports")
+        .select("*", { count: "exact", head: true });
+      if (count != null) reportCount = count;
+    }
+  }
 
   return (
     <div className="space-y-8">
@@ -160,6 +174,13 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Stats */}
+      <StatsBar
+        airlineCount={airlines.length}
+        carrierCount={carriers.length}
+        reportCount={reportCount}
+      />
+
       {/* Recommended carriers */}
       <section className="soft-panel p-5 sm:p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -183,7 +204,7 @@ export default async function HomePage() {
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {recommended.map((carrier) => (
-            <CarrierCard key={carrier.id} carrier={carrier} />
+            <CompactCarrierCard key={carrier.id} carrier={carrier} />
           ))}
         </div>
         <p className="mt-4 text-xs leading-6 text-slate-500">

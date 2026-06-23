@@ -55,7 +55,11 @@ export default function RootLayout({
               Some links on this site are affiliate links. As an Amazon Associate we may earn
               from qualifying purchases. This never affects which carriers we recommend.
             </p>
-            <p className="pt-2">
+            <p className="pt-2 flex flex-wrap gap-x-2 gap-y-1">
+              <a href="/legal/privacy" className="text-slate-400 hover:text-slate-600 transition-colors">Privacy</a>
+              <span className="text-slate-300">·</span>
+              <a href="/legal/terms" className="text-slate-400 hover:text-slate-600 transition-colors">Terms</a>
+              <span className="hidden sm:inline text-slate-300">·</span>
               <a href="/admin/reports" className="text-slate-400 hover:text-slate-600 transition-colors">Admin</a>
               <span className="text-slate-300">·</span>
               <a href="/admin/refresh-status" className="text-slate-400 hover:text-slate-600 transition-colors">Freshness</a>
