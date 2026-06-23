@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <article className="prose prose-slate max-w-3xl mx-auto">
+    <article className="prose prose-sm prose-slate max-w-3xl mx-auto leading-relaxed">
       <h1>Privacy Policy</h1>
       <p className="text-sm text-slate-500">Last updated: June 23, 2026</p>
 
@@ -76,13 +76,9 @@ export default function PrivacyPage() {
       </p>
 
       <h2>7. Third-party services</h2>
-      <ul>
-        <li><strong>Vercel</strong> — hosting and serverless functions</li>
-        <li><strong>Supabase</strong> — database and storage</li>
-      </ul>
       <p>
-        Each service processes data under its own privacy policy. We use them in
-        standard configurations with data protection safeguards.
+        We use trusted third-party infrastructure providers to host our service.
+        These providers do not access your data for their own purposes.
       </p>
 
       <h2>8. Contact</h2>
