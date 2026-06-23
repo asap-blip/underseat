@@ -20,21 +20,6 @@ function money(value: number | null | undefined) {
   return value != null ? `$${value}` : "Price varies";
 }
 
-function fitBadge(verification: Carrier["verification"]) {
-  switch (verification) {
-    case "team_verified":
-      return { icon: "🛫", label: "Fit Verified", cls: "bg-emerald-50 text-emerald-700 ring-emerald-200" };
-    case "traveler_reported":
-      return { icon: "🛫", label: "Traveler Tested", cls: "bg-amber-50 text-amber-700 ring-amber-200" };
-    case "not_verified_yet":
-      return { icon: "⏳", label: "Unverified", cls: "bg-slate-50 text-slate-500 ring-slate-200" };
-    case "failed_check":
-      return { icon: "❌", label: "Doesn't Fit", cls: "bg-rose-50 text-rose-600 ring-rose-200" };
-    case "needs_review":
-      return { icon: "⚠️", label: "Needs Review", cls: "bg-orange-50 text-orange-600 ring-orange-200" };
-  }
-}
-
 function reportBadge(travelerReports: number | null | undefined) {
   if (travelerReports && travelerReports > 0) {
     return { icon: "📊", label: `${travelerReports} report${travelerReports === 1 ? "" : "s"}`, cls: "bg-emerald-50 text-emerald-700 ring-emerald-200" };
@@ -74,26 +59,20 @@ export function CompactCarrierCard({
   carrier: Carrier;
   checkHref?: string;
 }) {
-  const fit = fitBadge(carrier.verification);
   const report = reportBadge(carrier.travelerReports);
 
   return (
     <article className="group flex flex-col rounded-xl border border-brand-200/70 bg-white shadow-sm ring-1 ring-white/80 transition-shadow hover:shadow-md">
       <div className="flex flex-1 flex-col gap-3 px-4 py-3.5">
         {/* ── Brand + name row ── */}
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0 flex items-center gap-2">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-brand-100 text-[10px] font-extrabold text-caramel">
-              {initials(carrier.brand)}
-            </span>
-            <div className="min-w-0">
-              <span className="text-[11px] font-extrabold uppercase tracking-wide text-caramel">{carrier.brand}</span>
-              <h3 className="truncate text-sm font-extrabold leading-tight text-navy">{carrier.model}</h3>
-            </div>
+        <div className="flex items-center gap-2">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-brand-100 text-[10px] font-extrabold text-caramel">
+            {initials(carrier.brand)}
+          </span>
+          <div className="min-w-0">
+            <span className="text-[11px] font-extrabold uppercase tracking-wide text-caramel">{carrier.brand}</span>
+            <h3 className="truncate text-sm font-extrabold leading-tight text-navy">{carrier.model}</h3>
           </div>
-
-          {/* Fit status badge — top-right corner */}
-          <Badge icon={fit.icon} label={fit.label} cls={fit.cls} />
         </div>
 
         {/* ── Metrics row 1: weight + pet capacity ── */}
