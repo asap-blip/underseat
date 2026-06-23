@@ -13,7 +13,7 @@ export default function TermsPage() {
 
       <h2>1. Service description</h2>
       <p>
-        Underseat (flypewpet) is a pet carrier compatibility checker for air travel.
+        Underseat is a pet carrier compatibility checker for air travel.
         It compares carrier dimensions against published airline in-cabin pet policies
         and provides a Pass / Tight fit / No verdict based on the data we have on file.
       </p>
