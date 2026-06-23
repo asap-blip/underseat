@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase/client";
 import { sendAlert } from "@/lib/notifications";
+import { sendReportNotification } from "@/lib/email";
 
 export async function POST(req: Request) {
   try {
@@ -33,6 +34,39 @@ export async function POST(req: Request) {
     }
 
     await sendAlert("New carrier report submitted", { carrierId, fitStatus });
+
+    // Fetch carrier name for the email notification (fire-and-forget)
+    const { data: carrier } = await supabase
+      .from("carriers")
+      .select("brand, model")
+      .eq("id", carrierId)
+      .maybeSingle();
+
+    let carrierName = carrierId;
+    if (carrier) {
+      carrierName = `${carrier.brand} ${carrier.model}`;
+    }
+
+    let airlineName: string | undefined;
+    if (airlineId) {
+      const { data: airline } = await supabase
+        .from("airlines")
+        .select("name")
+        .eq("id", airlineId)
+        .maybeSingle();
+      if (airline) airlineName = airline.name;
+    }
+
+    const fitLabel =
+      fitStatus === "fits" ? "Fits" : fitStatus === "tight" ? "Tight fit" : "Does not fit";
+
+    sendReportNotification({
+      carrierName,
+      airlineName,
+      fitStatus: fitLabel,
+      notes: notes || undefined,
+      submittedAt: new Date(),
+    });
 
     return NextResponse.json({ ok: true });
   } catch {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { carrierRequestSchema } from "@/lib/validation/schemas";
 import { getRepository } from "@/lib/data/repository";
+import { sendCarrierSuggestionEmail } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -27,6 +28,14 @@ export async function POST(req: Request) {
       email: parsed.data.email || null,
       note: parsed.data.note ?? null,
     });
+
+    // Send email notification (fire-and-forget; won't block response if credentials missing)
+    sendCarrierSuggestionEmail({
+      carrierName: parsed.data.carrier.trim(),
+      email: parsed.data.email || undefined,
+      submittedAt: new Date(),
+    });
+
     return NextResponse.json({ ok: true });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Request failed";
