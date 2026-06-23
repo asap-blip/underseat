@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import type { Carrier } from "@/lib/data/types";
 import { trackedClickUrl } from "@/lib/affiliate";
-import { TrustChecklist } from "./carrier/TrustChecklist";
+import { freshness } from "@/lib/freshness";
 
 function initials(brand: string) {
   return brand
@@ -18,6 +18,14 @@ function initials(brand: string) {
 
 function money(value: number | null | undefined) {
   return value != null ? `$${value}` : "Price varies";
+}
+
+function StatusPill({ icon, label, className }: { icon: string; label: string; className: string }) {
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${className}`}>
+      {icon} {label}
+    </span>
+  );
 }
 
 function Metric({ label, value }: { label: string; value: string }) {
@@ -84,7 +92,6 @@ export function CarrierCard({
             </div>
             <h3 className="mt-1.5 text-base font-extrabold leading-snug text-navy">{carrier.model}</h3>
           </div>
-          <TrustChecklist carrier={carrier} />
         </div>
 
         {carrier.description && (
@@ -96,6 +103,37 @@ export function CarrierCard({
           <Metric label="Empty" value={`${carrier.weightKg} kg`} />
           <Metric label="Pet" value={carrier.maxPetWeightKg ? `${carrier.maxPetWeightKg} kg` : "Varies"} />
         </dl>
+
+        {/* Status badges */}
+        {(() => {
+          const isVerified = carrier.verification === 'team_verified' || carrier.verification === 'traveler_reported';
+          const isReview = carrier.verification === 'needs_review' || carrier.verification === 'failed_check';
+          const rules = isVerified
+            ? { icon: '✅', label: 'Rules checked', className: 'bg-green-100 text-green-800' }
+            : isReview
+            ? { icon: '❌', label: 'Needs review', className: 'bg-red-100 text-red-800' }
+            : { icon: '⏳', label: 'Awaiting review', className: 'bg-amber-100 text-amber-800' };
+
+          const reportCount = carrier.travelerReports ?? 0;
+          const reports = reportCount > 0
+            ? { icon: '📊', label: `${reportCount} report${reportCount === 1 ? '' : 's'}`, className: 'bg-green-100 text-green-800' }
+            : { icon: '📊', label: 'No reports', className: 'bg-gray-100 text-gray-600' };
+
+          const f = freshness(carrier.verifiedAt).band;
+          const freshnessBadge = f === 'fresh'
+            ? { icon: '🟢', label: 'Fresh', className: 'bg-green-100 text-green-800' }
+            : f === 'aging'
+            ? { icon: '🟡', label: 'Aging', className: 'bg-amber-100 text-amber-800' }
+            : { icon: '🔴', label: 'Stale', className: 'bg-red-100 text-red-800' };
+
+          return (
+            <div className="flex flex-wrap gap-1.5 mt-3">
+              <StatusPill {...rules} />
+              <StatusPill {...reports} />
+              <StatusPill {...freshnessBadge} />
+            </div>
+          );
+        })()}
 
         <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
           <span>{carrier.softSided ? "Soft-sided" : "Hard-sided"}</span>
